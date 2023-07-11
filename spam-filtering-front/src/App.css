@@ -1,0 +1,75 @@
+
+.outer-container {
+  width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.container {
+  max-width: 600px;
+  height: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.navigator {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.navigator button {
+  margin-right: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #f2f2f2;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.navigator button.active {
+  background-color: #A8C8F9;
+  color: #fff;
+}
+
+.section {
+  margin-top: 20px;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-section textarea,
+.input-section input[type='file'] {
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 100%;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.input-section button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #A8C8F9;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+}
+
+footer {
+  /*justify-content: center;*/
+  text-align: center;
+}
+
+h1 {
+  text-align: center;
+  padding: 20px;
+  padding-top: 0px;
+}
