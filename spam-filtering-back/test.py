@@ -152,7 +152,7 @@ def home():
 @app.route('/predict',methods=['POST'])
 def predict():
 
-	df= pd.read_csv("spam.csv", encoding="latin-1")
+	df= pd.read_csv("./spam.csv", encoding="latin-1")
 	df.drop(['Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4'], axis=1, inplace=True)
 	# Features and Labels
 	df['label'] = df['v1'].map({'ham': 0, 'spam': 1})
@@ -175,16 +175,56 @@ def predict():
 	NB_spam_model = open('NB_spam_model.pkl','rb')
 	clf = joblib.load(NB_spam_model)
 
+
+	#단어들
+	y_pred = clf.predict(X_test)
+	from sklearn.pipeline import make_pipeline
+	from lime import lime_text
+	from lime.lime_text import LimeTextExplainer
+
+	from sklearn.pipeline import make_pipeline
+	pipeline = make_pipeline(cv, clf) # 텍스트 데이터 벡터화 및 분류 모델링
+
+	class_names=['0','1']
+	explainer = LimeTextExplainer(class_names=class_names)
+
+
+
+
+
 	if request.method == 'POST':
 		data = request.get_json()
 		section = data['section']
 		value = data['value']
 		#value = data['email']
 		vect = cv.transform([value]).toarray()
+		from sklearn.metrics import accuracy_score
+		accuracy = accuracy_score(y_test,y_pred)
+
+		#단어들
+		exp = explainer.explain_instance(value, pipeline.predict_proba, num_features=6)
+		print(exp.as_list())
 		
+		prediction = pipeline.predict_proba([value])[0,1]
+		my_prediction = clf.predict(vect)
+		print((exp).as_list())
+
+		import json
+		s = list(exp.as_list())
+		l = {}
+		for i in s :
+			if i[0] not in l :
+				l[i[0]] = round(i[1]*100,2)
+
+
+		test_data = {'result':  '%.2f 확률로 스팸' % accuracy if my_prediction == 1 else '%.2f 확률로 햄' % accuracy }
+		test_data2 = {'result': str((exp).as_list()) + '%.2f 확률로 스팸' % prediction if my_prediction == 1 else '%.2f 확률로 햄' % prediction }
+		test_data3 = {'result' : json.dumps(l,indent=10)}
+
+
 		my_prediction = clf.predict(vect)
 	#return render_template('result.html',prediction = my_prediction)
-	return jsonify({'result': '스팸' if my_prediction == 1 else '햄'})
+	return jsonify(test_data3)
 
 
 
