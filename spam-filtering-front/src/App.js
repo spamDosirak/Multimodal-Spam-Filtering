@@ -5,12 +5,56 @@ function App() {
   const [selectedSection, setSelectedSection] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [conversionResult, setConversionResult] = useState('');
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [selectedAudioFile, setSelectedAudioFile] = useState(null);
+
+  const handleImageFileChange = (event) => {
+    setSelectedImageFile(event.target.files[0]);
+  };
+  const handleAudioFileChange = (event) => {
+    setSelectedAudioFile(event.target.files[0]);
+  };
+
 
   const handleSectionChange = (section) => {
     setSelectedSection(section);
   };
 
-  const handleConvert = () => {
+  const convertAudio = () => {
+    const formData = new FormData();
+    formData.append('audio', selectedAudioFile);
+
+    fetch('/convert/audio', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        setConversionResult(data.result);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  };
+
+  const convertImage = () => {
+    const formData = new FormData();
+    formData.append('image', selectedImageFile);
+  
+    fetch('/convert/image', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        setConversionResult(data.text + data.result);
+      })
+      .catch(error => {
+        // 에러 처리
+      });
+  };
+
+  const predictText = () => {
     fetch('/predict', {
       method: 'POST',
       headers: {
@@ -67,21 +111,21 @@ function App() {
                 value={inputValue}
                 onChange={handleInputChange}
               />
-              <button onClick={handleConvert}>변환</button>
+              <button onClick={predictText}>변환</button>
             </div>
           )}
 
           {selectedSection === 'image' && (
             <div className="input-section">
-              <input type="file" accept="image/*" />
-              <button onClick={handleConvert}>변환</button>
+              <input type="file" accept="image/*" onChange={handleImageFileChange} />
+              <button onClick={convertImage}>변환</button>
             </div>
           )}
 
           {selectedSection === 'audio' && (
             <div className="input-section">
-              <input type="file" accept="audio/*" />
-              <button onClick={handleConvert}>변환</button>
+              <input type="file" accept="audio/*" onChange={handleAudioFileChange}/>
+              <button onClick={convertAudio}>변환</button>
             </div>
           )}
         </div>
@@ -103,3 +147,4 @@ function App() {
 }
 
 export default App;
+
