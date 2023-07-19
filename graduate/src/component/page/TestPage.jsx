@@ -49,11 +49,11 @@ export default function TestPage(props){
 
     return(
         <div>
-        <header>
+        <header style={{float: 'right', margin : '10px'}}> ＠spamDosirak </header>
             <button 
                 onClick={ () => navigate("../")}
             >home</button>
-        </header>
+
         <Wrapper>
         <AppContainer>
             <Buttons

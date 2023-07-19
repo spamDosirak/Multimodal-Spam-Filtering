@@ -219,12 +219,12 @@ def predict():
 
 		test_data = {'result':  '%.2f 확률로 스팸' % accuracy if my_prediction == 1 else '%.2f 확률로 햄' % accuracy }
 		test_data2 = {'result': str((exp).as_list()) + '%.2f 확률로 스팸' % prediction if my_prediction == 1 else '%.2f 확률로 햄' % prediction }
-		test_data3 = {'result' : json.dumps(l,indent=10)}
-
+		test_data10 = {'result' : json.dumps(l,indent=10)}
+		test_data3 = {'result': '스팸' if my_prediction == 1 else '햄', 'vocabs' : json.dumps(l,indent=10)}
 
 		my_prediction = clf.predict(vect)
 	#return render_template('result.html',prediction = my_prediction)
-	return jsonify(test_data3)
+	return jsonify({'result': '스팸' if my_prediction == 1 else '햄', 'vocabs' : json.dumps(l,indent=10)})
 
 
 

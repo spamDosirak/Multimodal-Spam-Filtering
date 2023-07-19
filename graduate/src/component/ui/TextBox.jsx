@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from "styled-components";
+import "./css/Button.css";
+
 
 
 import { useState } from 'react';
@@ -36,7 +38,7 @@ export default function TextBox(props){
 
   const [selectedSection, setSelectedSection] = useState('');
   const [inputValue, setInputValue] = useState('');
-  const [conversionResult, setConversionResult] = useState([]);
+  const [conversionResult, setConversionResult] = useState([{}]);
 
   const handleSectionChange = (section) => {
     setSelectedSection(section);
@@ -53,7 +55,7 @@ export default function TextBox(props){
       .then(response => response.json())
       .then(data => {
         // 요청에 대한 응답 처리
-        setConversionResult(data.result);
+        setConversionResult(data);
         
       })
       .catch(error => {
@@ -79,8 +81,8 @@ export default function TextBox(props){
             margin : "0.5vw",
             width:"80vw",
             height:"100%",
-            border:"5px solid #0400ff",
-            boxShadow : "0 0 10px 3px #0400ff",
+            border:"1px solid #0400ff",
+            boxShadow : "0 0 10px 1px #0400ff",
             }}
         >
             <Div_txt>
@@ -95,15 +97,13 @@ export default function TextBox(props){
                     onChange={handleInputChange}
                 />
                 <button 
-                  style = {{
-                    border : "50px",
-                    margin : " 10px 20px",
-                    backgroundColor : "skyblue",
-                  }}
+                  
                   onClick={handleConvert}>검사하기</button>
             </Div_txt>
             <Div_graph>
-                
+                        <div>
+                          {conversionResult.vocabs}
+                        </div>
             </Div_graph>
             <Div_result>
                 <div className="section">
@@ -112,7 +112,8 @@ export default function TextBox(props){
                         <div className="result">
                         <h2>결과: {
                           
-                        conversionResult}</h2>
+                        conversionResult.result}</h2>
+                        
                       
                         </div>
                     )}

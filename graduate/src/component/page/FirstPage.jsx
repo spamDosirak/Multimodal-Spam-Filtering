@@ -7,6 +7,7 @@ import ImageButton from '../ui/ImageButton';
 import VoiceButton from '../ui/VoiceButton';
 
 import { useNavigate } from "react-router-dom";
+import { display } from '@mui/system';
 
 export default function FirstPage(props) {
 
@@ -14,6 +15,8 @@ export default function FirstPage(props) {
 
 
     return (
+        <div>
+        <header style={{float: 'right', margin : '10px'}}> ＠spamDosirak </header>
         <Container
             //maxWidth='md'
         >
@@ -48,6 +51,7 @@ export default function FirstPage(props) {
                 </Grid>
             </Box>
         </Container>
+        </div>
         
     );
 
