@@ -20,16 +20,40 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './'
 
 
-@app.route('/api/convert', methods=['POST'])
-def convert():
-    data = request.get_json()
-    section = data['section']
-    value = data['value']
 
-    # 입력값에 대한 처리 로직 작성
+##스팸 분류를 위한 모델 생성부분은 공통되는 부분으로 코드 중복이 너무 많이 돼서 따로 빼놨습니다.
 
-    return jsonify({'message': 'Conversion successful'})
+df= pd.read_csv("./spam.csv", encoding="latin-1")
+df.drop(['Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4'], axis=1, inplace=True)
+df['label'] = df['v1'].map({'ham': 0, 'spam': 1})
+X = df['v2']
+y = df['label']
+	
+cv = CountVectorizer()
+X = cv.fit_transform(X) # Fit the Data
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
+from sklearn.naive_bayes import MultinomialNB
+clf = MultinomialNB()
+clf.fit(X_train,y_train)
+y_pred = clf.predict(X_test)
+
+from sklearn.pipeline import make_pipeline
+from lime import lime_text
+from lime.lime_text import LimeTextExplainer
+from sklearn.pipeline import make_pipeline
+pipeline = make_pipeline(cv, clf) # 텍스트 데이터 벡터화 및 분류 모델링
+class_names=['0','1']
+explainer = LimeTextExplainer(class_names=class_names)
+
+
+
+
+
+
+
+#Image -> Text 후 Spam 검사
 
 @app.route('/convert/image', methods=['POST'])
 def convertImage():
@@ -78,40 +102,17 @@ def convertImage():
 		text += field['inferText'] + ' '
 	#print(text)
 	
-	## 스팸 판단
-	df= pd.read_csv("spam.csv", encoding="latin-1")
-	df.drop(['Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4'], axis=1, inplace=True)
-	# Features and Labels
-	df['label'] = df['v1'].map({'ham': 0, 'spam': 1})
-	X = df['v2']
-	y = df['label']
 	
-	cv = CountVectorizer()
-	# Extract Feature With CountVectorizer
-	X = cv.fit_transform(X) # Fit the Data
-	from sklearn.model_selection import train_test_split
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
-	#Naive Bayes Classifier
-	from sklearn.naive_bayes import MultinomialNB
-
-	clf = MultinomialNB()
-	clf.fit(X_train,y_train)
-	#clf.score(X_test,y_test)
-	#Alternative Usage of Saved Model
-	#joblib.dump(clf, 'NB_spam_model.pkl')
-	#NB_spam_model = open('NB_spam_model.pkl','rb')
 	vect = cv.transform([text]).toarray()
 	
 	my_prediction = clf.predict(vect)
 	
-	##스팸 판단 end
 	
-
-
 	# 처리 결과를 'result' 필드에 담아서 JSON 응답으로 반환
-	return jsonify({'text': text,
-                 	'result': '스팸' if my_prediction == 1 else '햄'})
+	return jsonify({'text': text, 'result': '스팸' if my_prediction == 1 else '햄'})
 
+
+#Audio -> Text
 @app.route('/convert/audio', methods=['POST'])
 def convertAudio():
     audio = request.files['audio']
@@ -145,52 +146,12 @@ def convertAudio():
     
     return jsonify({'result' : result})
 
-@app.route('/')
-def home():
-	return render_template('home.html')
 
+
+#Text Spam 검사
 @app.route('/predict',methods=['POST'])
 def predict():
-
-	df= pd.read_csv("./spam.csv", encoding="latin-1")
-	df.drop(['Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4'], axis=1, inplace=True)
-	# Features and Labels
-	df['label'] = df['v1'].map({'ham': 0, 'spam': 1})
-	X = df['v2']
-	y = df['label']
 	
-	cv = CountVectorizer()
-	# Extract Feature With CountVectorizer
-	X = cv.fit_transform(X) # Fit the Data
-	from sklearn.model_selection import train_test_split
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
-	#Naive Bayes Classifier
-	from sklearn.naive_bayes import MultinomialNB
-
-	clf = MultinomialNB()
-	clf.fit(X_train,y_train)
-	#clf.score(X_test,y_test)
-	#Alternative Usage of Saved Model
-	joblib.dump(clf, 'NB_spam_model.pkl')
-	NB_spam_model = open('NB_spam_model.pkl','rb')
-	clf = joblib.load(NB_spam_model)
-
-
-	#단어들
-	y_pred = clf.predict(X_test)
-	from sklearn.pipeline import make_pipeline
-	from lime import lime_text
-	from lime.lime_text import LimeTextExplainer
-
-	from sklearn.pipeline import make_pipeline
-	pipeline = make_pipeline(cv, clf) # 텍스트 데이터 벡터화 및 분류 모델링
-
-	class_names=['0','1']
-	explainer = LimeTextExplainer(class_names=class_names)
-
-
-
-
 
 	if request.method == 'POST':
 		data = request.get_json()
@@ -222,11 +183,22 @@ def predict():
 		test_data10 = {'result' : json.dumps(l,indent=10)}
 		test_data3 = {'result': '스팸' if my_prediction == 1 else '햄', 'vocabs' : json.dumps(l,indent=10)}
 
-		my_prediction = clf.predict(vect)
-	#return render_template('result.html',prediction = my_prediction)
 	return jsonify({'result': '스팸' if my_prediction == 1 else '햄', 'vocabs' : json.dumps(l,indent=10)})
 
 
+
+
+
+@app.route('/')
+def home():
+	return render_template('home.html')
+@app.route('/api/convert', methods=['POST'])
+def convert():
+    data = request.get_json()
+    section = data['section']
+    value = data['value']
+    # 입력값에 대한 처리 로직 작성
+    return jsonify({'message': 'Conversion successful'})
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', debug=True)
