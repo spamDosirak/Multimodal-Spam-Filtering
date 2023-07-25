@@ -138,7 +138,8 @@ export default function ImageBox(props){
             <Div_result>
                 {conversionResult && (
                 <div className="result">
-                <h2>결과: {conversionResult.result}</h2>
+                <h2>NB 결과: {conversionResult.result1}</h2>
+                <h2>SVM 결과: {conversionResult.result2}</h2>
                 </div>
                 )}
             </Div_result>
