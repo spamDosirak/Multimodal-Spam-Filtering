@@ -3,6 +3,9 @@ import pandas as pd
 import pickle
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Activation
+from tensorflow.keras.models import load_model
 from flask import jsonify
 import joblib
 import copy
@@ -87,7 +90,7 @@ def SVM(df):
 	X = df['v2'].apply(preprocess_svm)
 	y = df['label']
 	X_train, X_test, y_train, y_test = fit_data(cv, X, y)
-	
+
 	from sklearn.svm import SVC
 	clf = SVC(kernel='linear', C=1, probability=True, random_state=42)
 	clf.fit(X_train,y_train)
@@ -234,15 +237,23 @@ def predict():
 				l[i[0]] = round(i[1]*100,2)
 
 		#SVM predict
-		cv2 = cv.fit(SVM(df)[5])
+		svm_vect = joblib.load('svm_vectorizer.pkl')
+		svm_model = joblib.load('svm_model.pkl')
+
+		cv2 = svm_vect
 		vect2 = cv2.transform([value2]).toarray()
-		accuracy2 = accuracy_score(SVM(df)[0], SVM(df)[2]) #순서 NB와 동일
+		#accuracy2 = accuracy_score(SVM(df)[0], SVM(df)[2]) #순서 NB와 동일
+		accuracy2 = svm_model.predict_proba(vect2)[0,1]
+
 		#단어들
 		exp2 = SVM(df)[4].explain_instance(value2, SVM(df)[3].predict_proba, num_features=6)
 		print(exp2.as_list())
 		prediction2 = SVM(df)[3].predict_proba([value2])[0,1]
-		my_prediction2 = SVM(df)[1].predict(vect2)
+		my_prediction2 = svm_model.predict(vect2)
 		print((exp2).as_list())
+		print(my_prediction2)
+
+
 
 		s2 = list(exp2.as_list())
 		l2 = {}
@@ -250,12 +261,12 @@ def predict():
 			if i2[0] not in l2 :
 				l2[i2[0]] = round(i2[1]*100,2)
 
-		test_data = {'result1':  '%.2f 확률로 스팸' % accuracy1 if my_prediction1 == 1 else '%.2f 확률로 햄' % accuracy1, 'result2':  '%.2f 확률로 스팸' % accuracy2 if my_prediction2 == 1 else '%.2f 확률로 햄' % accuracy2 }
+		test_data = {'result1':  '%.2f 확률로 스팸' % accuracy1 if my_prediction1 == 1 else '%.2f 확률로 햄' % accuracy1, 'result2':  '%.2f 확률로 스팸' % accuracy2 if my_prediction2 == 'spam' else '%.2f 확률로 햄' % accuracy2 }
 		#test_data2 = {'result': str((exp).as_list()) + '%.2f 확률로 스팸' % prediction if my_prediction == 1 else '%.2f 확률로 햄' % prediction }
 		#test_data10 = {'result' : json.dumps(l,indent=10)}
 		#test_data3 = {'result': '스팸' if my_prediction == 1 else '햄', 'vocabs' : json.dumps(l,indent=10)}
 
-	return jsonify({'result1': '스팸' if my_prediction1 == 1 else '햄', 'result2': '스팸' if my_prediction2 == 1 else '햄', 'vocabs1' : json.dumps(l,indent=10), 'vocabs2' : json.dumps(l2,indent=10)})
+	return jsonify({'result1': '스팸' if my_prediction1 == 1 else '햄', 'result2': '스팸' if my_prediction2 == 'spam' else '햄', 'vocabs1' : json.dumps(l,indent=10), 'vocabs2' : json.dumps(l2,indent=10)})
 
 
 
