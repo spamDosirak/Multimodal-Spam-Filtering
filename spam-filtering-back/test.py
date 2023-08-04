@@ -9,6 +9,8 @@ from tensorflow.keras.models import load_model
 from flask import jsonify
 import joblib
 import copy
+from lime.lime_text import LimeTextExplainer
+from sklearn.pipeline import make_pipeline
 ## clova ocr
 import requests
 import uuid
@@ -52,58 +54,17 @@ def preprocess_svm(email):
 	return email
 
 
-##스팸 분류를 위한 모델 생성부분은 공통되는 부분으로 코드 중복이 너무 많이 돼서 따로 빼놨습니다.
 #NB
-df= pd.read_csv("./spam.csv", encoding="latin-1")
-df.drop(['Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4'], axis=1, inplace=True)
-df['label'] = df['v1'].map({'ham': 0, 'spam': 1})
-cv = CountVectorizer()
-
-def fit_data(cv,X,y):	
-	X = cv.fit_transform(X) # Fit the Data
-	from sklearn.model_selection import train_test_split
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
-	return(X_train, X_test, y_train, y_test)
-	
-#NB
-def NB(df):
-	X = df['v2']
-	y = df['label']
-	X_train, X_test, y_train, y_test = fit_data(cv, X, y)
-
-	from sklearn.naive_bayes import MultinomialNB
-	clf = MultinomialNB()
-	clf.fit(X_train,y_train)
-	y_pred = clf.predict(X_test)
-
-	from sklearn.pipeline import make_pipeline
-	from lime import lime_text
-	from lime.lime_text import LimeTextExplainer
-	from sklearn.pipeline import make_pipeline
-	pipeline = make_pipeline(cv, clf) # 텍스트 데이터 벡터화 및 분류 모델링
-	class_names=['0','1']
-	explainer = LimeTextExplainer(class_names=class_names)
-	return(y_test, clf, y_pred, pipeline, explainer, X)
+def NB():
+	NB_vect = joblib.load('NB_vectorizer.pkl')
+	NB_model = joblib.load('NB_model.pkl')
+	return(NB_vect, NB_model)
 
 #SVM
-def SVM(df):
-	X = df['v2'].apply(preprocess_svm)
-	y = df['label']
-	X_train, X_test, y_train, y_test = fit_data(cv, X, y)
-
-	from sklearn.svm import SVC
-	clf = SVC(kernel='linear', C=1, probability=True, random_state=42)
-	clf.fit(X_train,y_train)
-	y_pred = clf.predict(X_test)
-
-	from sklearn.pipeline import make_pipeline
-	from lime import lime_text
-	from lime.lime_text import LimeTextExplainer
-	from sklearn.pipeline import make_pipeline
-	pipeline = make_pipeline(cv, clf) # 텍스트 데이터 벡터화 및 분류 모델링
-	class_names=['0','1']
-	explainer = LimeTextExplainer(class_names=class_names)
-	return(y_test, clf, y_pred, pipeline, explainer, X)
+def SVM():
+	svm_vect = joblib.load('svm_vectorizer.pkl')
+	svm_model = joblib.load('svm_model.pkl')
+	return(svm_vect, svm_model)
 
 
 
@@ -157,16 +118,16 @@ def convertImage():
 		text += field['inferText'] + ' '
 	#print(text)
 	
-	cv1 = cv.fit(NB(df)[5])
+	cv1 = NB()[0]
 	vect1 = cv1.transform([text]).toarray()
-	my_prediction1 = NB(df)[1].predict(vect1)  #NB의 clf.predict(vect)
+	my_prediction1 = NB()[1].predict(vect1)  #NB의 clf.predict(vect)
 	
-	cv2 = cv.fit(SVM(df)[5])
+	cv2 = SVM()[0]
 	vect2 = cv2.transform([text]).toarray()
-	my_prediction2 = SVM(df)[1].predict(vect2)  #NB의 clf.predict(vect)
+	my_prediction2 = SVM()[1].predict(vect2)  #NB의 clf.predict(vect)
 	
 	# 처리 결과를 'result' 필드에 담아서 JSON 응답으로 반환
-	return jsonify({'text': text, 'result1': '스팸' if my_prediction1 == 1 else '햄', 'result2': '스팸' if my_prediction2 == 1 else '햄'})
+	return jsonify({'text': text, 'result1': '스팸' if my_prediction1 == 'spam' else '햄', 'result2': '스팸' if my_prediction2 == 'spam' else '햄'})
 
 
 #Audio -> Text
@@ -218,55 +179,67 @@ def predict():
 		#value = data['email']
 
 		#NB predict
-		cv1 = cv.fit(NB(df)[5]) #NB에서 training에 사용된 데이터를 fit
+		NB_vect = NB()[0]
+		NB_model = NB()[1]
+
+		cv1 = NB_vect #NB에서 training에 사용된 데이터를 fit
 		vect = cv1.transform([value]).toarray()
 		from sklearn.metrics import accuracy_score
-		accuracy1 = accuracy_score(NB(df)[0], NB(df)[2]) #NB(df)[0]는 NB에서의 y_pred
-		#단어들
-		exp1 = NB(df)[4].explain_instance(value, NB(df)[3].predict_proba, num_features=6) #NB(df)[4]는 NB의 explainer, [3]은 NB pipeline
+		accuracy1 = NB_model.predict_proba(vect)[0, 1]
+
+		# 단어들
+		pipeline = make_pipeline(cv1, NB_model)  # 텍스트 데이터 벡터화 및 분류 모델링
+		class_names = ['0', '1']
+		explainer = LimeTextExplainer(class_names=class_names)
+
+		exp1 = explainer.explain_instance(value, pipeline.predict_proba, num_features=6) #NB(df)[4]는 NB의 explainer, [3]은 NB pipeline
 		print(exp1.as_list())
-		prediction1 = NB(df)[3].predict_proba([value])[0,1]
-		my_prediction1 = NB(df)[1].predict(vect) #NB(df)[1]은 NB clf
-		print((exp1).as_list())
+		sorted_exp1 = sorted(exp1.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
+
+		my_prediction1 = NB_model.predict(vect) #NB(df)[1]은 NB clf
+		print(sorted_exp1)
+		print(my_prediction1)
 		
 		import json
-		s = list(exp1.as_list())
+		s = list(sorted_exp1)
 		l = {}
 		for i in s :
 			if i[0] not in l :
 				l[i[0]] = round(i[1]*100,2)
 
 		#SVM predict
-		svm_vect = joblib.load('svm_vectorizer.pkl')
-		svm_model = joblib.load('svm_model.pkl')
+		svm_vect = SVM()[0]
+		svm_model = SVM()[1]
 
 		cv2 = svm_vect
 		vect2 = cv2.transform([value2]).toarray()
-		#accuracy2 = accuracy_score(SVM(df)[0], SVM(df)[2]) #순서 NB와 동일
 		accuracy2 = svm_model.predict_proba(vect2)[0,1]
 
-		#단어들
-		exp2 = SVM(df)[4].explain_instance(value2, SVM(df)[3].predict_proba, num_features=6)
+		# 단어들
+		pipeline2 = make_pipeline(cv2, svm_model)  # 텍스트 데이터 벡터화 및 분류 모델링
+		class_names = ['0', '1']
+		explainer2 = LimeTextExplainer(class_names=class_names)
+
+		exp2 = explainer2.explain_instance(value2, pipeline2.predict_proba, num_features=6)
 		print(exp2.as_list())
-		prediction2 = SVM(df)[3].predict_proba([value2])[0,1]
+		sorted_exp2 = sorted(exp2.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
 		my_prediction2 = svm_model.predict(vect2)
-		print((exp2).as_list())
+		print(sorted_exp2)
 		print(my_prediction2)
 
 
-
-		s2 = list(exp2.as_list())
+		s2 = sorted_exp2
 		l2 = {}
 		for i2 in s2 :
 			if i2[0] not in l2 :
 				l2[i2[0]] = round(i2[1]*100,2)
 
-		test_data = {'result1':  '%.2f 확률로 스팸' % accuracy1 if my_prediction1 == 1 else '%.2f 확률로 햄' % accuracy1, 'result2':  '%.2f 확률로 스팸' % accuracy2 if my_prediction2 == 'spam' else '%.2f 확률로 햄' % accuracy2 }
+		test_data = {'result1':  '%.2f 확률로 스팸' % accuracy1 if my_prediction1 == 'spam' else '%.2f 확률로 햄' % accuracy1, 'result2':  '%.2f 확률로 스팸' % accuracy2 if my_prediction2 == 'spam' else '%.2f 확률로 햄' % accuracy2 }
 		#test_data2 = {'result': str((exp).as_list()) + '%.2f 확률로 스팸' % prediction if my_prediction == 1 else '%.2f 확률로 햄' % prediction }
 		#test_data10 = {'result' : json.dumps(l,indent=10)}
 		#test_data3 = {'result': '스팸' if my_prediction == 1 else '햄', 'vocabs' : json.dumps(l,indent=10)}
 
-	return jsonify({'result1': '스팸' if my_prediction1 == 1 else '햄', 'result2': '스팸' if my_prediction2 == 'spam' else '햄', 'vocabs1' : json.dumps(l,indent=10), 'vocabs2' : json.dumps(l2,indent=10)})
+	return jsonify({'result1': '스팸' if my_prediction1 == 'spam' else '햄', 'result2': '스팸' if my_prediction2 == 'spam' else '햄', 'vocabs1' : json.dumps(l,indent=10), 'vocabs2' : json.dumps(l2,indent=10)})
 
 
 
