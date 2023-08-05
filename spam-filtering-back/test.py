@@ -1,3 +1,4 @@
+from __future__ import division
 from flask import Flask,render_template,url_for,request
 import pandas as pd 
 import pickle
@@ -16,6 +17,14 @@ import os
 import pyaudio
 import io
 import wave
+import re
+import sys
+
+from google.cloud import speech
+
+import pyaudio
+from six.moves import queue
+
 
 
 app = Flask(__name__)
@@ -167,19 +176,20 @@ def convertImage():
 
 
 #Audio -> Text
-@app.route('/convert/audio', methods=['POST'])
-def convertAudio():
+@app.route('/convert/audiofile', methods=['POST'])
+def saveAudio():
     audio = request.files['audio']
     audio_file = os.path.join(app.config['UPLOAD_FOLDER'], 'audio.wav')
-    print(audio_file)
     audio.save(audio_file)
     
+    result = convertAudio('audio.wav')
+    return jsonify({'result' : result})
+    
+def convertAudio(audio_file):
     from google.cloud import speech
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:\stt-test-key.json"
     client = speech.SpeechClient()
-
     #file_name = os.path.join(os.path.dirname(__file__), ".", "file.wav")
-
     with io.open(audio_file, "rb") as audio_file:
         content = audio_file.read()
         audio = speech.RecognitionAudio(content=content)
@@ -197,10 +207,65 @@ def convertAudio():
     result = ""
     for res in response.results:
         result += "{}".format(res.alternatives[0].transcript)
-    
-    return jsonify({'result' : result})
+    return result
 
+import pyaudio
+import wave
+## 스트리밍 처리
+@app.route('/convert/start_record', methods=['POST'])
+def recorder():
+    FORMAT = pyaudio.paInt16
+    CHANNELS = 2
+    RATE = 44100
+    CHUNK = 1024
+    RECORD_SECONDS = 10
+    WAVE_OUTPUT_FILENAME = "streaming.wav"
+    global recording
+    recording = True
+    audio = pyaudio.PyAudio()
 
+    # start Recording
+    stream = audio.open(format=FORMAT, channels=CHANNELS,
+                    rate=RATE, input=True,
+                    frames_per_buffer=CHUNK)
+    print ("recording...")
+    frames = []
+
+    while recording:
+        data = stream.read(CHUNK)
+        frames.append(data)
+    print ("finished recording")
+
+    # stop Recording
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
+
+    waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+    waveFile.setnchannels(CHANNELS)
+    waveFile.setsampwidth(audio.get_sample_size(FORMAT))
+    waveFile.setframerate(RATE)
+    waveFile.writeframes(b''.join(frames))
+    waveFile.close()
+    result = convertAudio(WAVE_OUTPUT_FILENAME)
+    print(result)
+    cv1 = cv.fit(NB(df)[5])
+    vect1 = cv1.transform([result]).toarray()
+    my_prediction1 = NB(df)[1].predict(vect1)  #NB의 clf.predict(vect)
+    print(my_prediction1)
+    cv2 = cv.fit(SVM(df)[5])
+    vect2 = cv2.transform([result]).toarray()
+    my_prediction2 = SVM(df)[1].predict(vect2)  #NB의 clf.predict(vect)
+    print(my_prediction2)
+    # 처리 결과를 'result' 필드에 담아서 JSON 응답으로 반환
+    return jsonify({'text': result, 'result1': '스팸' if my_prediction1 == 1 else '햄', 'result2': '스팸' if my_prediction2 == 1 else '햄'})
+
+@app.route('/convert/stop_record', methods=['POST'])
+def stop_record():
+    global result
+    global recording
+    recording = False
+    return jsonify({'result' : "stop"})
 
 #Text Spam 검사
 @app.route('/predict',methods=['POST'])
@@ -258,9 +323,6 @@ def predict():
 	return jsonify({'result1': '스팸' if my_prediction1 == 1 else '햄', 'result2': '스팸' if my_prediction2 == 1 else '햄', 'vocabs1' : json.dumps(l,indent=10), 'vocabs2' : json.dumps(l2,indent=10)})
 
 
-
-
-
 @app.route('/')
 def home():
 	return render_template('home.html')
@@ -273,5 +335,5 @@ def convert():
     return jsonify({'message': 'Conversion successful'})
 
 if __name__ == '__main__':
-        app.run(host='0.0.0.0', debug=True)
+        app.run(host='0.0.0.0', port=5000, debug=True)
         
