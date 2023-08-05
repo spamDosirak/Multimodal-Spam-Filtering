@@ -1,8 +1,7 @@
-import React ,{ useState }from 'react';
+import React ,{ useState, useRef }from 'react';
 import styled from "styled-components";
 
 import "./css/Button.css";
-
 
 const Div_txt = styled.div`
     width:50%;
@@ -28,22 +27,31 @@ const Div_result = styled.div`
     border:1px solid black;
 `;
 
+const RealTimeAudioBar = styled.div`
+    height: 10%;
+    width: 90%;
+    border: 1px solid black;
+    margin: 1vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
 
 export default function VoiceBox(props){
-    const [selectedSection, setSelectedSection] = useState('');
-    const [inputValue, setInputValue] = useState('');
     const [conversionResult, setConversionResult] = useState('');
-    const [selectedImageFile, setSelectedImageFile] = useState(null);
     const [selectedAudioFile, setSelectedAudioFile] = useState(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const audioRef = useRef(null);
 
     const handleAudioFileChange = (event) => {
         setSelectedAudioFile(event.target.files[0]);
     };
+
     const convertAudio = () => {
         const formData = new FormData();
         formData.append('audio', selectedAudioFile);
     
-        fetch('/convert/audio', {
+        fetch('/convert/audiofile', {
             method: 'POST',
             body: formData
         })
@@ -56,7 +64,21 @@ export default function VoiceBox(props){
             });
         };
 
-
+    const handleStartRecording = () => {
+        fetch('/convert/start_record', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+        setConversionResult(data.text + data.result1 + data.result2)
+        })
+        .catch(error => console.error(error));
+    };
+    
+    const handleStopRecording = () => {
+        fetch('/convert/stop_record', { method: 'POST' })
+        .then(response => response.text())
+        .then(data => console.log(data))
+        .catch(error => console.error(error));
+    };
 
     return(
         <div
@@ -83,10 +105,16 @@ export default function VoiceBox(props){
                     }}>
                     <input type="file" accept="audio/*" onChange={handleAudioFileChange}/>
                 </div>
+                <RealTimeAudioBar>
+                    <audio ref={audioRef} controls muted={isRecording ? false : true} />
+                </RealTimeAudioBar>
+                
+                <button className="geomsaButton" onClick={handleStartRecording}>녹음 시작</button>
+                <button className="geomsaButton" onClick={handleStopRecording}>녹음 종료</button>
                 <div
                     style = {{
                     margin : "1vw 1vw 1vw 1vw",
-                    height : "60%",
+                    height : "50%",
                     width : "90%",
                     border : "1px solid black"
                     }}>
@@ -107,4 +135,4 @@ export default function VoiceBox(props){
 
 
     );
-}
+} 
