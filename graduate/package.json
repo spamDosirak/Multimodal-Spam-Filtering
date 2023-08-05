@@ -15,7 +15,7 @@
     "react-native": "^0.72.3",
     "react-native-flat-button": "^1.0.6",
     "react-router-dom": "^6.14.1",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "styled-components": "^6.0.3",
     "web-vitals": "^2.1.4"
   },
