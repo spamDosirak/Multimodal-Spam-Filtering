@@ -1,40 +1,33 @@
 import React from 'react';
 import styled from "styled-components";
-import "./css/Button.css";
-
-
-
 import { useState } from 'react';
 
-
+import "../Page.css"
 
 const Div_txt = styled.div`
     width:50%;
     height:100%;
     float:left;
-    border : 1px solid black;
-
-
+    border : 1px solid rgb(212, 210, 224);
     align-items : center;
 `;
 
 const Div_graph = styled.div`
-    width:50%;
+    width:45%;
     height:50%;
     float:left;
-    border:1px solid black;
+    border:1px solid rgb(212, 210, 224);
 `;
 
 const Div_result = styled.div`
-    width:50%;
+    width:45%;
     height:50%;
     float:left;
-    border:1px solid black;
+    border:1px solid rgb(212, 210, 224);
 `;
 
 
-export default function TextBox(props){
-
+export default function TextPage(props){
 
   const [selectedSection, setSelectedSection] = useState('');
   const [inputValue, setInputValue] = useState('');
@@ -56,9 +49,9 @@ export default function TextBox(props){
       .then(data => {
         // 요청에 대한 응답 처리
         setConversionResult(data);
-        
       })
       .catch(error => {
+        setConversionResult("error");
         // 에러 처리
       });
   };
@@ -67,11 +60,11 @@ export default function TextBox(props){
     setInputValue(event.target.value);
   };
 
-
-
-
     return(
+
+      
         <div
+        className='textContainer'
         style={{
             //alignItems : "center",
             textAlign: "center",
@@ -81,8 +74,8 @@ export default function TextBox(props){
             margin : "0.5vw",
             width:"80vw",
             height:"100%",
-            border:"1px solid #0400ff",
-            boxShadow : "0 0 10px 1px #0400ff",
+            // border:"1px solid #0400ff",
+            // boxShadow : "0 0 10px 1px #0400ff",
             }}
         >
             <Div_txt>
@@ -102,12 +95,12 @@ export default function TextBox(props){
             </Div_txt>
             <Div_graph>
                         <div>
-                        <h2>NB 결과: {conversionResult.vocabs1}</h2>
-                        <h2>SVM 결과: {conversionResult.vocabs2}</h2>
+                          <h2>NB 결과: {conversionResult.vocabs1}</h2>
+                          <h2>SVM 결과: {conversionResult.vocabs2}</h2>
                         </div>
             </Div_graph>
             <Div_result>
-                <div className="section">
+            <div className="section">
 
                     {conversionResult && (
                         <div className="result">
@@ -121,7 +114,7 @@ export default function TextBox(props){
                       
                         </div>
                     )}
-                </div>
+              </div>
         
                 
             </Div_result>

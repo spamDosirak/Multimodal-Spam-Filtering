@@ -1,0 +1,10 @@
+.container {
+    display : flex;
+    height : 90vh;
+}
+
+.others {
+    flex : 5.5;
+    /* background-color: rgb(233, 232, 231); */
+    margin: 20px 50px 50px 50px;
+}
