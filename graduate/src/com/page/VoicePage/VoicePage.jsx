@@ -1,30 +1,29 @@
-import React ,{ useState, useRef }from 'react';
+import React ,{ useState ,useRef }from 'react';
 import styled from "styled-components";
 
-import "./css/Button.css";
 
 const Div_txt = styled.div`
     width:50%;
     height:100%;
     float:left;
-    border : 1px solid black;
+    border : 1px solid rgb(212, 210, 224);
 
 
     align-items : center;
 `;
 
 const Div_graph = styled.div`
-    width:50%;
+    width:45%;
     height:50%;
     float:left;
-    border:1px solid black;
+    border:1px solid rgb(212, 210, 224);
 `;
 
 const Div_result = styled.div`
-    width:50%;
+    width:45%;
     height:50%;
     float:left;
-    border:1px solid black;
+    border:1px solid rgb(212, 210, 224);
 `;
 
 const RealTimeAudioBar = styled.div`
@@ -37,21 +36,21 @@ const RealTimeAudioBar = styled.div`
     justify-content: center;
 `;
 
-export default function VoiceBox(props){
+export default function VoicePage(props){
     const [conversionResult, setConversionResult] = useState('');
     const [selectedAudioFile, setSelectedAudioFile] = useState(null);
     const [isRecording, setIsRecording] = useState(false);
     const audioRef = useRef(null);
 
+
     const handleAudioFileChange = (event) => {
         setSelectedAudioFile(event.target.files[0]);
     };
-
     const convertAudio = () => {
         const formData = new FormData();
         formData.append('audio', selectedAudioFile);
     
-        fetch('/convert/audiofile', {
+        fetch('/convert/audio', {
             method: 'POST',
             body: formData
         })
@@ -72,7 +71,7 @@ export default function VoiceBox(props){
         })
         .catch(error => console.error(error));
     };
-    
+        
     const handleStopRecording = () => {
         fetch('/convert/stop_record', { method: 'POST' })
         .then(response => response.text())
@@ -82,6 +81,7 @@ export default function VoiceBox(props){
 
     return(
         <div
+        className='voiceContainer'
         style={{
             //alignItems : "center",
             textAlign: "center",
@@ -91,35 +91,24 @@ export default function VoiceBox(props){
             margin : "0.5vw",
             width:"80vw",
             height:"100%",
-            border:"1px solid #00b12c",
-            boxShadow : "0 0 10px 1px #00b12c",
             }}
         >
             <Div_txt>
-            <div
-                    style ={{
-                        margin : "1vw 1vw 1vw 1vw",
-                        height : "10%",
-                        width : "90%",
-                        border : "1px solid black"
-                    }}>
+                <div className="input-section">
                     <input type="file" accept="audio/*" onChange={handleAudioFileChange}/>
+                    <button class = "geomsaButton" onClick={convertAudio}>변환</button>
                 </div>
+
+
                 <RealTimeAudioBar>
                     <audio ref={audioRef} controls muted={isRecording ? false : true} />
                 </RealTimeAudioBar>
                 
                 <button className="geomsaButton" onClick={handleStartRecording}>녹음 시작</button>
                 <button className="geomsaButton" onClick={handleStopRecording}>녹음 종료</button>
-                <div
-                    style = {{
-                    margin : "1vw 1vw 1vw 1vw",
-                    height : "50%",
-                    width : "90%",
-                    border : "1px solid black"
-                    }}>
-                </div>
-                    <button class = "geomsaButton" onClick={convertAudio}>변환</button>
+
+
+
             </Div_txt>
             <Div_graph>
 
@@ -135,4 +124,4 @@ export default function VoiceBox(props){
 
 
     );
-} 
+}

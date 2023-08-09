@@ -4,9 +4,10 @@ import pandas as pd
 import pickle
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Activation
-from tensorflow.keras.models import load_model
+import tensorflow
+# from tensorflow.keras.models import Sequential
+# from tensorflow.keras.layers import Dense, Activation
+# from tensorflow.keras.models import load_model
 from flask import jsonify
 import joblib
 import copy
@@ -28,7 +29,7 @@ import sys
 from google.cloud import speech
 
 import pyaudio
-from six.moves import queue
+# from six.moves import queue
 
 
 
@@ -319,5 +320,5 @@ def convert():
     return jsonify({'message': 'Conversion successful'})
 
 if __name__ == '__main__':
-        app.run(host='0.0.0.0', port=5000, debug=True)
+        app.run(host='0.0.0.0', debug=True)
         

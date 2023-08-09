@@ -1,31 +1,29 @@
 import React , { useState  } from 'react';
 import styled from "styled-components";
-import TextBoxGraph from "./TextBoxContents/TextBoxGraph"
-import "./css/Button.css";
 import { useRef } from 'react';
 const Div_txt = styled.div`
     width:50%;
     height:100%;
     float:left;
-    border : 1px solid black;
+    border : 1px solid rgb(212, 210, 224);
 
 `;
 
 const Div_graph = styled.div`
-    width:50%;
+    width:45%;
     height:50%;
     float:left;
-    border:1px solid black;
+    border:1px solid rgb(212, 210, 224);
 `;
 
 const Div_result = styled.div`
-    width:50%;
+    width:45%;
     height:50%;
     float:left;
-    border:1px solid black;
+    border:1px solid rgb(212, 210, 224);
 `;
 
-export default function ImageBox(props){
+export default function ImagePage(props){
 
     const [selectedSection, setSelectedSection] = useState('');
     const [inputValue, setInputValue] = useState('');
@@ -35,9 +33,6 @@ export default function ImageBox(props){
     const imgRef = useRef();
     const [selectedAudioFile, setSelectedAudioFile] = useState(null);
 
-    // const handleImageFileChange = (event) => {
-    //     setSelectedImageFile(event.target.files[0]);
-    // };
 
     const saveImgFile = (event) => {
         setSelectedImageFile(event.target.files[0]);
@@ -50,21 +45,6 @@ export default function ImageBox(props){
 
     };
 
-    // const convertImage = () => {
-    //     const formData = new FormData();
-    //     formData.append('image', selectedImageFile);
-    //     fetch('/convert/image', {
-    //         method: 'POST',
-    //         body: formData
-    //     })
-    //         .then(response => response.json())
-    //         .then(data => {
-    //         setConversionResult(data.text + data.result);
-    //         })
-    //         .catch(error => {
-    //         // 에러 처리
-    //         });
-    // };
     const convertImage = () => {
         const formData = new FormData();
         formData.append('image', selectedImageFile);
@@ -81,11 +61,9 @@ export default function ImageBox(props){
             });
     };
 
-
-
-
     return(
         <div
+        className='imageContainer'
         style={{
             //alignItems : "center",
             textAlign: "center",
@@ -95,8 +73,6 @@ export default function ImageBox(props){
             margin : "0.5vw",
             width:"80vw",
             height:"100%",
-            border:"1px solid #ff6600",
-            boxShadow : "0 0 10px 1px #ff6600",
             }}
         >
             <Div_txt>
@@ -125,7 +101,7 @@ export default function ImageBox(props){
                                 }}
                         />
                 </div>
-                <button  class = "geomsaButton" onClick={convertImage}>변환</button>
+                <button  className = "geomsaButton" onClick={convertImage}>변환</button>
             </Div_txt>
             <Div_graph>
                 {conversionResult && (
@@ -138,8 +114,8 @@ export default function ImageBox(props){
             <Div_result>
                 {conversionResult && (
                 <div className="result">
-                <h2>NB 결과: {conversionResult.result1}</h2>
-                <h2>SVM 결과: {conversionResult.result2}</h2>
+                    <h2>NB 결과: {conversionResult.result1}</h2>
+                    <h2>SVM 결과: {conversionResult.result2}</h2>
                 </div>
                 )}
             </Div_result>

@@ -1,20 +1,23 @@
 
-import { BrowserRouter, Routes, Route} from 'react-router-dom';
+import { BrowserRouter, Routes, Route ,Link, HashRouter} from 'react-router-dom';
+import React ,{Component  } from 'react';
+import styled from "styled-components";
 import logo from './logo.svg';
 import './App.css';
-import FirstPage from './component/page/FirstPage';
-import TestPage from './component/page/TestPage';
+
+import MainPage from './com/page/MainPage';
+
+
+import TextBox from './com/page/TextPage/TextPage';
+import Sidebar from './com/sidebar/Sidebar';
+
+
 
 function App() {
-  return (
-    <BrowserRouter>
-          <Routes>
-            <Route index element={<FirstPage/>}/>
-            <Route  path="first"  element={<FirstPage/>}/>
-            <Route path="test" element={<TestPage/>}/>
-          </Routes>
-    </BrowserRouter>
-  );
+
+    return (
+      <MainPage/>
+    );
 }
 
 export default App;
