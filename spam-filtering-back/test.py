@@ -268,10 +268,11 @@ def predict():
 		
 		import json
 		s = list(sorted_exp1)
-		l = {}
+		l1 = {'category':[],'value':[]}
 		for i in s :
-			if i[0] not in l :
-				l[i[0]] = round(i[1]*100,2)
+			if i[0] not in l1['category'] :
+				l1['category'].append(str(i[0]))
+				l1['value'].append((round(i[1]*100,2)))
 
 		#SVM predict
 		svm_vect = SVM()[0]
@@ -295,17 +296,18 @@ def predict():
 
 
 		s2 = sorted_exp2
-		l2 = {}
+		l2={'category':[],'value':[]}
 		for i2 in s2 :
-			if i2[0] not in l2 :
-				l2[i2[0]] = round(i2[1]*100,2)
+			if i2[0] not in l2['category'] :
+				l2['category'].append(str(i2[0]))
+				l2['value'].append((round(i2[1]*100,2)))
+	
 
-		test_data = {'result1':  '%.2f 확률로 스팸' % accuracy1 if my_prediction1 == 'spam' else '%.2f 확률로 햄' % accuracy1, 'result2':  '%.2f 확률로 스팸' % accuracy2 if my_prediction2 == 'spam' else '%.2f 확률로 햄' % accuracy2 }
-		#test_data2 = {'result': str((exp).as_list()) + '%.2f 확률로 스팸' % prediction if my_prediction == 1 else '%.2f 확률로 햄' % prediction }
-		#test_data10 = {'result' : json.dumps(l,indent=10)}
-		#test_data3 = {'result': '스팸' if my_prediction == 1 else '햄', 'vocabs' : json.dumps(l,indent=10)}
-
-	return jsonify({'result1': '스팸' if my_prediction1 == 'spam' else '햄', 'result2': '스팸' if my_prediction2 == 'spam' else '햄', 'vocabs1' : json.dumps(l,indent=10), 'vocabs2' : json.dumps(l2,indent=10)})
+	return jsonify({
+		'result1': '스팸' if my_prediction1 == 'spam' else '햄', 
+		'result2': '스팸' if my_prediction2 == 'spam' else '햄', 
+		'vocabs1' : l1, 
+		'vocabs2' : l2})
 
 
 @app.route('/')
