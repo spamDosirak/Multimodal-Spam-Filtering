@@ -14,7 +14,7 @@ import { TextInput } from "react-native-paper";
 //그래프를 위한 import
 //npm install --save react-chartjs-2 
 //npm install --save chart.js
-import { Bar,  } from "react-chartjs-2";
+import { Bar  } from "react-chartjs-2";
 import "chart.js/auto";
 
 
@@ -27,7 +27,7 @@ const Div_txt = styled.div`
   width: 95%;
   height: 20%;
   float: left;
-  border: 1px solid rgb(212, 210, 224);
+ 
 
   display: flex;
   padding: 2vw 2vw 2vw 2vw;
@@ -37,7 +37,7 @@ const Div_txtShow = styled.div`
   width: 40%;
   height: 70%;
   float: left;
-  border: 1px solid rgb(212, 210, 224);
+ 
   margin: 0px 4px;
   
 `;
