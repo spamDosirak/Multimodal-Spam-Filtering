@@ -80,9 +80,9 @@ def SVM():
 
 
 #Image -> Text 후 Spam 검사
-
 @app.route('/convert/image', methods=['POST'])
 def convertImage():
+	import json
 	image = request.files['image']
 	filepath = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
 	image.save(filepath)
@@ -127,17 +127,73 @@ def convertImage():
 	for field in result['images'][0]['fields']:
 		text += field['inferText'] + ' '
 	#print(text)
+
+	text2 = copy.deepcopy(text)
+	value = text
+
+
+	NB_vect = NB()[0]
+	NB_model = NB()[1]
+
+	cv1 = NB_vect #NB에서 training에 사용된 데이터를 fit
+	vect = cv1.transform([value]).toarray()
+	from sklearn.metrics import accuracy_score
+
+	# 단어들
+
+	pipeline = make_pipeline(cv1, NB_model)  # 텍스트 데이터 벡터화 및 분류 모델링
+	class_names = ['0', '1']
+	explainer = LimeTextExplainer(class_names=class_names)
+	exp1 = explainer.explain_instance(value, pipeline.predict_proba, num_features=6) #NB(df)[4]는 NB의 explainer, [3]은 NB pipeline
+	sorted_exp1 = sorted(exp1.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
+	my_prediction1 = NB_model.predict(vect) #NB(df)[1]은 NB clf
+	print("NB sorted : ",sorted_exp1)
+	print("NB sorted : ",my_prediction1)
 	
-	cv1 = NB()[0]
-	vect1 = cv1.transform([text]).toarray()
-	my_prediction1 = NB()[1].predict(vect1)  #NB의 clf.predict(vect)
+	import json
+	s = list(sorted_exp1)
+	ll = {'category':[],'value':[]}
+	for i in s :
+		if i[0] not in ll['category'] :
+			ll['category'].append(str(i[0]))
+			ll['value'].append((round(i[1]*100,2)))
+	#그래프
 	
 	cv2 = SVM()[0]
-	vect2 = cv2.transform([text]).toarray()
-	my_prediction2 = SVM()[1].predict(vect2)  #NB의 clf.predict(vect)
+	svm_model = SVM()[1]
+	vect2 = cv2.transform([text2]).toarray()
+	my_prediction2 = SVM()[1].predict(vect2)  #SVM의 clf.predict(vect)
+	
+	# 단어들
+	pipeline2 = make_pipeline(cv2, SVM()[1])  # 텍스트 데이터 벡터화 및 분류 모델링
+	class_names = ['0', '1']
+	explainer2 = LimeTextExplainer(class_names=class_names)
+
+	exp2 = explainer2.explain_instance(text2, pipeline2.predict_proba, num_features=6)
+	#print(exp2.as_list())
+	sorted_exp2 = sorted(exp2.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
+	my_prediction2 = svm_model.predict(vect2)
+	print("SVM sorted : ",sorted_exp2)
+	print("SVM my prediction :" , my_prediction2)
+		
+
+	s2 = sorted_exp2
+	l2={'category':[],'value':[]}
+	for i2 in s2 :
+		if i2[0] not in l2['category'] :
+			l2['category'].append(str(i2[0]))
+			l2['value'].append((round(i2[1]*100,2)))
+			
+
 	
 	# 처리 결과를 'result' 필드에 담아서 JSON 응답으로 반환
-	return jsonify({'text': text, 'result1': '스팸' if my_prediction1 == 'spam' else '햄', 'result2': '스팸' if my_prediction2 == 'spam' else '햄'})
+	return jsonify({
+		'text': text, 
+		'result1': '스팸' if my_prediction1 == 'spam' else '햄',
+		'result2': '스팸' if my_prediction2 == 'spam' else '햄',
+		'vocabs1' : ll, 
+		'vocabs2' : l2
+		})
 
 
 #Audio -> Text
