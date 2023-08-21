@@ -1,6 +1,26 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from "react";
 import styled from "styled-components";
+import { useState, PureComponent } from "react";
+import "../Page.css";
 
+//이 순서대로 깔아주세용
+//npm install --save react-native
+//npm install --save react-native-safe-area-context
+//npm install --save react-native-paper 
+//npm install --save react-native-web
+import { TextInput } from "react-native-paper";
+
+
+//그래프를 위한 import
+//npm install --save react-chartjs-2 
+//npm install --save chart.js
+import { Bar  } from "react-chartjs-2";
+import "chart.js/auto";
+
+
+//npm install --save react-loader-spinner
+import { Oval } from "react-loader-spinner";
+import HighlightedText from "../../highlight/HightLighted";
 
 
 const Div_txt = styled.div`
@@ -29,6 +49,7 @@ const Div_NB = styled.div`
     border:1px solid rgb(212, 210, 224);
     float: left;
     display: flex;
+    flex-direction: column;
 
 `;
 
@@ -36,17 +57,21 @@ const Div_SVM = styled.div`
     width:45%;
     height:50%;
     float:left;
-
     display: flex;
+    flex-direction: column;
     border:1px solid rgb(212, 210, 224);
 `;
 
 
 export default function VoicePage(props) {
     const [conversionResult, setConversionResult] = useState('');
+    const [NBResult, setNBResult] = useState('');
+    const [SVMResult, setSVMResult] = useState('');
     const [selectedAudioFile, setSelectedAudioFile] = useState(null);
-    const [isRecording, setIsRecording] = useState(false);
-    const audioRef = useRef(null);
+    const [NBgraph, setNBGraph] = useState({ category: [], value: [] });
+    const [SVMgraph, setSVMGraph] = useState({ category: [], value: [] });
+    const [selectedResultType, setSelectedResultType] = useState("NB");
+    const [loading, setLoading] = useState(false);
 
 
     const handleAudioFileChange = (event) => {
@@ -55,6 +80,10 @@ export default function VoicePage(props) {
     const convertAudio = () => {
         const formData = new FormData();
         formData.append('audio', selectedAudioFile);
+        setLoading(true);
+        setNBGraph({ category: [], value: [] });
+        setSVMGraph({ category: [], value: [] });
+        setConversionResult('');
 
         fetch('/convert/audio', {
             method: 'POST',
@@ -62,7 +91,12 @@ export default function VoicePage(props) {
         })
             .then(response => response.json())
             .then(data => {
-                setConversionResult(data.result);
+                setConversionResult(data.text);
+                setNBResult(data.result1)
+                setSVMResult(data.result2)
+                setNBGraph(data.vocabs1);
+                setSVMGraph(data.vocabs2);
+                setLoading(false);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -70,23 +104,90 @@ export default function VoicePage(props) {
     };
 
     const handleStartRecording = () => {
-
-
+        setNBGraph({ category: [], value: [] });
+        setSVMGraph({ category: [], value: [] });
+        setConversionResult('');
         fetch('/convert/start_record', { method: 'POST' })
             .then(response => response.json())
             .then(data => {
-                setConversionResult(data.text + data.result1 + data.result2)
+                setConversionResult(data.text);
+                setNBResult(data.result1)
+                setSVMResult(data.result2)
+                setNBGraph(data.vocabs1);
+                setSVMGraph(data.vocabs2);
+                setLoading(false);
             })
             .catch(error => console.error(error));
     };
 
     const handleStopRecording = () => {
-
-
+        setLoading(true);
         fetch('/convert/stop_record', { method: 'POST' })
             .then(response => response.text())
             .then(data => console.log(data))
             .catch(error => console.error(error));
+    };
+
+    const handleNBResult = () => {
+        setSelectedResultType("NB");
+    };
+    
+    const handleSVMResult = () => {
+        setSelectedResultType("SVM");
+    };
+
+    const NBchartData = {
+
+        labels: NBgraph.category,
+        datasets: [
+            {
+                label: "NB : Top 5 Words",
+                data: NBgraph.value,
+                backgroundColor: "#12c2e9",
+                datalabels: {
+                color: "black",
+                backgroundColor: 'white',
+                font: { size: 13, weight: 'bold' },
+                },
+            },
+        ],
+    };
+    const SVMchartData = {
+    
+        labels: SVMgraph.category,
+        datasets: [
+            {
+            label: "SVM : Top 5 Words",
+            data: SVMgraph.value,
+            backgroundColor: "#c471ed",
+            datalabels: {
+                color: "black",
+                backgroundColor: 'white',
+                font: { size: 13, weight: 'bold' },
+                },  
+            },
+        ],
+    };
+
+    const options = {
+        legend: {
+            display: true,
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false,
+                },
+            },
+            y: {
+                grid: {
+                    display: false,
+                },
+            },
+        },
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
     };
 
 
@@ -142,9 +243,42 @@ export default function VoicePage(props) {
                         lineHeight: "1.8",
                         padding: "2vw",
                     }}>
-                        {conversionResult && (conversionResult.text)}
+                        {(selectedResultType === "NB") && (NBgraph.category.length !== 0) 
+                            && (<HighlightedText text={conversionResult} queries={NBgraph.category} />)}
+                        {(selectedResultType === "SVM") && (SVMgraph.category.length !== 0) 
+                            && (<HighlightedText text={conversionResult} queries={SVMgraph.category} />)}
                     </div>
 
+                </div>
+                <div>
+                    <button
+                    onClick={handleNBResult}
+                    style={{
+                        backgroundColor: selectedResultType === "NB" ? "#12c2e9" : "",
+                        padding : "5px 10px 5px 10px",
+                        margin: "0px 5px 10px 0px",
+                        borderRadius: "32px",
+                        border : "none",
+                        boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
+                        color: "#6f6cd",
+                    }}
+                    >
+                    NB
+                    </button>
+                    <button
+                    onClick={handleSVMResult}
+                    style={{
+                        backgroundColor: selectedResultType === "SVM" ? "#c471ed" : "",
+                        padding : "5px 10px 5px 10px",
+                        margin: "0px 0px 10px 5px",
+                        borderRadius: "32px",
+                        border : "none",
+                        boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
+                        color: "#6f6cd",
+                    }}
+                    >
+                    SVM
+                    </button>
                 </div>
 
             </Div_txt>
@@ -181,23 +315,72 @@ export default function VoicePage(props) {
 
             <Div_NB>
                 <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw" }}> NB ( Naive Bayes )
-                    {/* {conversionResult && (
-                        <div>  :  {conversionResult.result1}</div>
-                    )} */}
+                    {NBResult && (
+                        <div>  :  {NBResult}</div>
+                    )}
                 </h3>
+                <div className="section" style={{ display: "flex", justifyContent: "center" }}>
+                    {loading ? (
+                        <div style={{ display: "flex", justifyContent: "center" }}>
+                        <Oval
+                            height={80}
+                            width={80}
+                            color="#12c2e9"
+                            visible={loading}
+                            ariaLabel="oval-loading"
+                            secondaryColor="#12c2e9"
+                            strokeWidth={2}
+                            strokeWidthSecondary={2}
+                        />
+                        </div>
+                    ) : null}
+
+                    {NBgraph.category.length !== 0 && (
+                        <div style={{ width: "100%", height: "120%" }}>
+                            <div style={{ width: "33vw", height: "11vw", padding: "2.5vw 2vw 0vw 1.5vw" }}>
+                                <Bar data={NBchartData} options={options} style={{}
+                                } />
+                            </div>
+                        </div>
+                    )}
+                </div>
             </Div_NB>
 
 
             <Div_SVM>
 
                 <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw" }}> SVM ( Support Vector Machine )
-                    {/* {conversionResult && (
-                        <div>  :  {conversionResult.result2}</div>
-                    )} */}
+                    {SVMResult && (
+                        <div>  :  {SVMResult}</div>
+                    )}
                 </h3>
+                <div className="section" style={{ display: "flex", justifyContent: "center" }}>
+                    {loading ? (
+                        <div style={{ display: "flex", justifyContent: "center" }}>
+                        <Oval
+                            height={80}
+                            width={80}
+                            color="#c471ed"
+                            visible={loading}
+                            ariaLabel="oval-loading"
+                            secondaryColor="#c471ed"
+                            strokeWidth={2}
+                            strokeWidthSecondary={2}
+                        />
+                        </div>
+                    ) : null}
+
+                    {SVMgraph.category.length !== 0 && (
+                        <div style={{ width: "100%", height: "120%" }}>
+                        <div style={{ width: "33vw", height: "11vw", padding: "2.5vw 2vw 0vw 1.5vw" }}>
+                            <Bar data={SVMchartData} options={options} style={{}
+                            } />
+                        </div>
+                        </div>
+                    )}
+                    </div>
             </Div_SVM>
         </div>
-
 
     );
 }

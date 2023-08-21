@@ -42,6 +42,23 @@ const Div_txtShow = styled.div`
   
 `;
 
+const Btn_Result = styled.div`
+  width: px;
+  height: 50px;
+  background: #f7f5f5;
+  position: relative;
+  border-radius: 32px;
+  border: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  box-shadow: -6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2);
+  color: #6f6cde;
+  font-size: large;
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+`
+
 const Div_NB = styled.div`
   width: 58%;
   height: 34%;
@@ -62,17 +79,21 @@ const Div_SVM = styled.div`
 `;
 
 export default function TextPage(props) {
-  const [selectedSection, setSelectedSection] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [conversionResult, setConversionResult] = useState([{}]);
   const [NBgraph, setNBGraph] = useState({ category: [], value: [] });
   const [SVMgraph, setSVMGraph] = useState({ category: [], value: [] });
+  const [selectedResultType, setSelectedResultType] = useState("NB");
 
   const [loading, setLoading] = useState(false);
   const [test, setTest] = useState(true);
 
-  const handleSectionChange = (section) => {
-    setSelectedSection(section);
+  const handleNBResult = () => {
+    setSelectedResultType("NB");
+  };
+
+  const handleSVMResult = () => {
+    setSelectedResultType("SVM");
   };
 
   const handleConvert = () => {
@@ -85,7 +106,7 @@ export default function TextPage(props) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ section: selectedSection, value: inputValue }),
+      body: JSON.stringify({value: inputValue }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -200,6 +221,7 @@ export default function TextPage(props) {
       <Div_txtShow>
         <div style={{
           margin: "20px",
+          paddingBottom: "10px",
           width: "90%",
           height: "90%",
           background: " #f8f8f8",
@@ -217,7 +239,40 @@ export default function TextPage(props) {
             lineHeight: "1.8",
             padding: "2vw",
           }}>
-            {(NBgraph.category.length != 0) && (<HighlightedText text={inputValue} queries={NBgraph.category} />)}
+            {(selectedResultType === "NB") && (NBgraph.category.length != 0) 
+              && (<HighlightedText text={inputValue} queries={NBgraph.category} />)}
+            {(selectedResultType === "SVM") && (SVMgraph.category.length != 0) 
+              && (<HighlightedText text={inputValue} queries={SVMgraph.category} />)}
+          </div>
+          <div>
+            <button
+              onClick={handleNBResult}
+              style={{
+                backgroundColor: selectedResultType === "NB" ? "#12c2e9" : "",
+                padding : "5px 10px 5px 10px",
+                margin: "0px 5px 10px 0px",
+                borderRadius: "32px",
+                border : "none",
+                boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
+                color: "#6f6cd",
+              }}
+            >
+              NB
+            </button>
+            <button
+              onClick={handleSVMResult}
+              style={{
+                backgroundColor: selectedResultType === "SVM" ? "#c471ed" : "",
+                padding : "5px 10px 5px 10px",
+                margin: "0px 0px 10px 5px",
+                borderRadius: "32px",
+                border : "none",
+                boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
+                color: "#6f6cd",
+              }}
+            >
+              SVM
+            </button>
           </div>
         </div>
       </Div_txtShow>
