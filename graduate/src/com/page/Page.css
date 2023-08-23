@@ -39,9 +39,12 @@
         linear-gradient(white, white) padding-box,
         linear-gradient(var(--angle),
             #1D976C,
-            #93F9B9) border-box;
+            #93F9B9 
+            ) border-box;
     animation: 5s rotate linear infinite;
 }
+/* #1D976C,
+#93F9B9 */
 
 @keyframes rotate {
     to {

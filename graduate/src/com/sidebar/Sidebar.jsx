@@ -10,7 +10,8 @@ import "./Sidebar.css";
 export default function Sidebar(props){
 
     const menus = [
-        {name : "TEXT" , path : "/"},
+        {name : "INFO" , path : "/"},
+        {name : "TEXT" , path : "/text"},
         {name : "IMAGE" , path : "/image"},
         {name : "VOCIE" , path : "/voice"}
     ]
@@ -29,9 +30,7 @@ export default function Sidebar(props){
                                     </Link>
                                 )
                             })}            
-                            {/* <li className = "sidebarListItem">IMAGE</li>
-                            <li className = "sidebarListItem">VOICE</li>    */}
-                            <li className = "sidebarListItemEnd">ABOUT US</li>        
+   
                         </ul>
                     </h3>                            
                 </div>

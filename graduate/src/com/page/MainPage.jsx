@@ -10,6 +10,7 @@ import "./MainPage.css"
 import TextPage from "./TextPage/TextPage";
 import ImagePage from "./ImagePage/ImagePage";
 import VoicePage from "./VoicePage/VoicePage";
+import InfoPage from "./InfoPage/InfoPage";
 
 
 
@@ -40,9 +41,10 @@ export default function MainPage(props){
             <BrowserRouter>
                 <div className="container">
                 <Sidebar/> 
-                <div className = "others">
+                <div className = "others" style = {{overflow: "scroll",}}>
                         <Routes>
-                            <Route path="/"  element={<TextPage/>} />
+                            <Route path="/"  element={<InfoPage />} />
+                            <Route path="/text"  element={<TextPage/>} />
                             <Route path="/image" element = {<ImagePage/>} />
                             <Route path="/voice" element = {<VoicePage/>} />
                         </Routes>               

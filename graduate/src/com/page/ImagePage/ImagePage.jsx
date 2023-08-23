@@ -45,6 +45,7 @@ export default function ImagePage(props) {
     const [selectedSection, setSelectedSection] = useState("");
     const [inputValue, setInputValue] = useState("");
     const [conversionResult, setConversionResult] = useState([{}]);
+    const [txt,setTxt] = useState(false);
     const [selectedImageFile, setSelectedImageFile] = useState(null);
     const [imgFile, setImgFile] = useState("");
     const imgRef = useRef();
@@ -66,6 +67,7 @@ export default function ImagePage(props) {
         const formData = new FormData();
         formData.append("image", selectedImageFile);
         setLoading(true);
+        setTxt(false);
         setNBGraph({ category: [], value: [] });
         setSVMGraph({ category: [], value: [] });
         setConversionResult([{}]);
@@ -78,7 +80,7 @@ export default function ImagePage(props) {
                 setConversionResult(data);
                 setNBGraph(data.vocabs1);
                 setSVMGraph(data.vocabs2);
-
+                setTxt(true);
                 setLoading(false);
             })
             .catch((error) => {
@@ -148,7 +150,7 @@ export default function ImagePage(props) {
                 fontSize: "1vw",
                 margin: "0.5vw",
                 width: "80vw",
-                height: "100%",
+                height: "95%",
             }}
         >
             <Div_txt>
@@ -222,7 +224,7 @@ export default function ImagePage(props) {
                             padding: "2vw",
                         }}
                     >
-                        {NBgraph.category.length != 0 && (
+                        {txt && (
                             <HighlightedText
                                 text={conversionResult.text}
                                 queries={NBgraph.category}

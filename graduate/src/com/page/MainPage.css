@@ -6,5 +6,9 @@
 .others {
     flex : 5.5;
     /* background-color: rgb(233, 232, 231); */
-    margin: 20px 50px 50px 50px;
+    margin: 10px 0px 0px 10px;
+}
+
+.others::-webkit-scrollbar{
+    display: none;
 }
