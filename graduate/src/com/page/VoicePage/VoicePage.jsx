@@ -203,7 +203,7 @@ export default function VoicePage(props) {
                 fontSize: "1vw",
                 margin: "0.5vw",
                 width: "80vw",
-                height: "100%",
+                height: "95%",
                 // border:"1px solid #0400ff",
                 // boxShadow : "0 0 10px 1px #0400ff",
             }}

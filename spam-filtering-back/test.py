@@ -146,7 +146,8 @@ def saveAudio():
     
 def convertAudio(audio_file):
     from google.cloud import speech
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:\stt-test-key.json"
+    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:\stt-test-key.json"
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:/users/82105/stt-test-key.json"
     client = speech.SpeechClient()
     #file_name = os.path.join(os.path.dirname(__file__), ".", "file.wav")
     with io.open(audio_file, "rb") as audio_file:

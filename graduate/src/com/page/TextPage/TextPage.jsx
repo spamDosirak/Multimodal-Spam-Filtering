@@ -81,6 +81,7 @@ const Div_SVM = styled.div`
 export default function TextPage(props) {
   const [inputValue, setInputValue] = useState("");
   const [conversionResult, setConversionResult] = useState([{}]);
+  const [txt,setTxt] = useState(false);
   const [NBgraph, setNBGraph] = useState({ category: [], value: [] });
   const [SVMgraph, setSVMGraph] = useState({ category: [], value: [] });
   const [selectedResultType, setSelectedResultType] = useState("NB");
@@ -97,6 +98,7 @@ export default function TextPage(props) {
   };
 
   const handleConvert = () => {
+    setTxt(false);
     setLoading(true);
     setNBGraph({ category: [], value: [] });
     setSVMGraph({ category: [], value: [] });
@@ -115,7 +117,7 @@ export default function TextPage(props) {
         setConversionResult(data);
         setNBGraph(data.vocabs1);
         setSVMGraph(data.vocabs2);
-
+        setTxt(true)
         setLoading(false);
       })
       .catch((error) => {
@@ -188,7 +190,7 @@ export default function TextPage(props) {
         fontSize: "1vw",
         margin: "0.5vw",
         width: "80vw",
-        height: "100%",
+        height: "95%",
       }}
     >
       <Div_txt>
@@ -239,9 +241,9 @@ export default function TextPage(props) {
             lineHeight: "1.8",
             padding: "2vw",
           }}>
-            {(selectedResultType === "NB") && (NBgraph.category.length != 0) 
+            {(selectedResultType === "NB")  && (txt) 
               && (<HighlightedText text={inputValue} queries={NBgraph.category} />)}
-            {(selectedResultType === "SVM") && (SVMgraph.category.length != 0) 
+            {(selectedResultType === "SVM") && (txt) 
               && (<HighlightedText text={inputValue} queries={SVMgraph.category} />)}
           </div>
           <div>
