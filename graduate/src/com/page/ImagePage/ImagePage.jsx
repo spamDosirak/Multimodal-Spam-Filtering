@@ -28,7 +28,7 @@ const Div_NB = styled.div`
     height: 65%;
     float: left;
 
-    margin: 0px 4px;
+    margin: 20px 4px 0px 0px;
     isplay: flex;
     flex-direction: column;
 `;
@@ -38,19 +38,19 @@ const Div_SVM = styled.div`
     height: 65%;
     float: left;
 
-    margin: 0px 4px;
+    margin: 20px 4px 0px 0px;
 `;
 
 export default function ImagePage(props) {
-    const [selectedSection, setSelectedSection] = useState("");
-    const [inputValue, setInputValue] = useState("");
-    const [conversionResult, setConversionResult] = useState([{}]);
-    const [txt,setTxt] = useState(false);
+    const [conversionResult, setConversionResult] = useState('');
     const [selectedImageFile, setSelectedImageFile] = useState(null);
     const [imgFile, setImgFile] = useState("");
     const imgRef = useRef();
     const [NBgraph, setNBGraph] = useState({ category: [], value: [] });
     const [SVMgraph, setSVMGraph] = useState({ category: [], value: [] });
+    const [NBResult, setNBResult] = useState('');
+    const [SVMResult, setSVMResult] = useState('');
+    const [selectedResultType, setSelectedResultType] = useState("NB");
     const [loading, setLoading] = useState(false);
 
     const saveImgFile = (event) => {
@@ -67,25 +67,34 @@ export default function ImagePage(props) {
         const formData = new FormData();
         formData.append("image", selectedImageFile);
         setLoading(true);
-        setTxt(false);
         setNBGraph({ category: [], value: [] });
         setSVMGraph({ category: [], value: [] });
-        setConversionResult([{}]);
+        setConversionResult('');
         fetch("/convert/image", {
             method: "POST",
             body: formData,
         })
             .then((response) => response.json())
             .then((data) => {
-                setConversionResult(data);
+                setConversionResult(data.text);
+                setNBResult(data.result1)
+                setSVMResult(data.result2)
                 setNBGraph(data.vocabs1);
                 setSVMGraph(data.vocabs2);
-                setTxt(true);
+
                 setLoading(false);
             })
             .catch((error) => {
                 // 에러 처리
             });
+    };
+
+    const handleNBResult = () => {
+        setSelectedResultType("NB");
+    };
+    
+    const handleSVMResult = () => {
+        setSelectedResultType("SVM");
     };
 
     const NBchartData = {
@@ -150,7 +159,7 @@ export default function ImagePage(props) {
                 fontSize: "1vw",
                 margin: "0.5vw",
                 width: "80vw",
-                height: "95%",
+                height: "100%",
             }}
         >
             <Div_txt>
@@ -203,7 +212,6 @@ export default function ImagePage(props) {
                 <div
                     style={{
                         margin: "20px",
-
                         width: "90%",
                         height: "90%",
                         background: " #f8f8f8",
@@ -224,12 +232,42 @@ export default function ImagePage(props) {
                             padding: "2vw",
                         }}
                     >
-                        {txt && (
-                            <HighlightedText
-                                text={conversionResult.text}
-                                queries={NBgraph.category}
-                            />
-                        )}
+                        {(selectedResultType === "NB") && (conversionResult) 
+                            && (<HighlightedText text={conversionResult} queries={NBgraph.category} probs={NBgraph.value} />)}
+                        {(selectedResultType === "SVM") && (conversionResult) 
+                            && (<HighlightedText text={conversionResult} queries={SVMgraph.category} probs={SVMgraph.value} />)}
+                    </div>
+                    <div>
+                        <button
+                        onClick={handleNBResult}
+                        style={{
+                            backgroundColor: selectedResultType === "NB" ? "#12c2e9" : "",
+                            padding : "5px 10px 5px 10px",
+                            margin: "0px 5px 10px 0px",
+                            borderRadius: "32px",
+                            border : "none",
+                            boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
+                            color: "#6f6cd",
+                            cursor: "pointer",
+                        }}
+                        >
+                        NB
+                        </button>
+                        <button
+                        onClick={handleSVMResult}
+                        style={{
+                            backgroundColor: selectedResultType === "SVM" ? "#c471ed" : "",
+                            padding : "5px 10px 5px 10px",
+                            margin: "0px 0px 10px 5px",
+                            borderRadius: "32px",
+                            border : "none",
+                            boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
+                            color: "#6f6cd",
+                            cursor: "pointer",
+                        }}
+                        >
+                        SVM
+                        </button>
                     </div>
                 </div>
             </Div_txtShow>
@@ -237,7 +275,7 @@ export default function ImagePage(props) {
             <Div_NB>
                 <h3
                     style={{
-                        lineHeight: "3",
+                        lineHeight: "2",
                         display: "flex",
                         margin: "0vw 0vw 0vw 2vw",
                         height: "2vw",
@@ -245,7 +283,9 @@ export default function ImagePage(props) {
                 >
                     {" "}
                     NB ( Naive Bayes )
-                    {conversionResult && <div> : {conversionResult.result1}</div>}{" "}
+                    {NBResult && (
+                        <div>  :  {NBResult}</div>
+                    )}
                 </h3>
 
                 <div
@@ -292,7 +332,7 @@ export default function ImagePage(props) {
             <Div_SVM>
                 <h3
                     style={{
-                        lineHeight: "3",
+                        lineHeight: "2",
                         display: "flex",
                         margin: "0vw 0vw 0vw 2vw",
                         height: "2vw",
@@ -300,7 +340,9 @@ export default function ImagePage(props) {
                 >
                     {" "}
                     SVM ( Support Vector Machine )
-                    {conversionResult && <div> : {conversionResult.result2}</div>}{" "}
+                    {SVMResult && (
+                        <div>  :  {SVMResult}</div>
+                    )}
                 </h3>
                 <div
                     className="section"

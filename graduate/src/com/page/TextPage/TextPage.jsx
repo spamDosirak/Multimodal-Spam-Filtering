@@ -80,14 +80,16 @@ const Div_SVM = styled.div`
 
 export default function TextPage(props) {
   const [inputValue, setInputValue] = useState("");
-  const [conversionResult, setConversionResult] = useState([{}]);
-  const [txt,setTxt] = useState(false);
+  const [NBResult, setNBResult] = useState('');
+  const [SVMResult, setSVMResult] = useState('');
   const [NBgraph, setNBGraph] = useState({ category: [], value: [] });
   const [SVMgraph, setSVMGraph] = useState({ category: [], value: [] });
   const [selectedResultType, setSelectedResultType] = useState("NB");
+  const [conversionResult, setConversionResult] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [test, setTest] = useState(true);
+  
 
   const handleNBResult = () => {
     setSelectedResultType("NB");
@@ -98,11 +100,10 @@ export default function TextPage(props) {
   };
 
   const handleConvert = () => {
-    setTxt(false);
     setLoading(true);
+    setConversionResult('');
     setNBGraph({ category: [], value: [] });
     setSVMGraph({ category: [], value: [] });
-    setConversionResult([{}]);
     fetch("/predict", {
       method: "POST",
       headers: {
@@ -113,11 +114,12 @@ export default function TextPage(props) {
       .then((response) => response.json())
       .then((data) => {
         // 요청에 대한 응답 처리
-
-        setConversionResult(data);
+        setConversionResult(data.text)
+        setNBResult(data.result1)
+        setSVMResult(data.result2)
         setNBGraph(data.vocabs1);
         setSVMGraph(data.vocabs2);
-        setTxt(true)
+
         setLoading(false);
       })
       .catch((error) => {
@@ -190,7 +192,7 @@ export default function TextPage(props) {
         fontSize: "1vw",
         margin: "0.5vw",
         width: "80vw",
-        height: "95%",
+        height: "100%",
       }}
     >
       <Div_txt>
@@ -241,10 +243,10 @@ export default function TextPage(props) {
             lineHeight: "1.8",
             padding: "2vw",
           }}>
-            {(selectedResultType === "NB")  && (txt) 
-              && (<HighlightedText text={inputValue} queries={NBgraph.category} />)}
-            {(selectedResultType === "SVM") && (txt) 
-              && (<HighlightedText text={inputValue} queries={SVMgraph.category} />)}
+            {(selectedResultType === "NB") && (conversionResult) 
+              && (<HighlightedText text={conversionResult} queries={NBgraph.category} probs={NBgraph.value} />)}
+            {(selectedResultType === "SVM") && (conversionResult) 
+              && (<HighlightedText text={conversionResult} queries={SVMgraph.category} probs={SVMgraph.value} />)}
           </div>
           <div>
             <button
@@ -257,6 +259,7 @@ export default function TextPage(props) {
                 border : "none",
                 boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
                 color: "#6f6cd",
+                cursor: "pointer",
               }}
             >
               NB
@@ -271,6 +274,7 @@ export default function TextPage(props) {
                 border : "none",
                 boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
                 color: "#6f6cd",
+                cursor: "pointer",
               }}
             >
               SVM
@@ -283,9 +287,10 @@ export default function TextPage(props) {
       <Div_NB>
 
         <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw" }}> NB ( Naive Bayes )
-          {conversionResult && (
-            <div>  :  {conversionResult.result1}</div>
-          )} </h3>
+          {NBResult && (
+              <div>  :  {NBResult}</div>
+          )}
+        </h3>
 
 
         <div className="section" style={{ display: "flex", justifyContent: "center" }}>
@@ -318,9 +323,10 @@ export default function TextPage(props) {
 
       <Div_SVM>
         <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw" }}> SVM ( Support Vector Machine )
-          {conversionResult && (
-            <div>  :  {conversionResult.result2}</div>
-          )} </h3>
+          {SVMResult && (
+              <div>  :  {SVMResult}</div>
+          )}
+        </h3>
 
         <div className="section" style={{ display: "flex", justifyContent: "center" }}>
           {loading ? (
