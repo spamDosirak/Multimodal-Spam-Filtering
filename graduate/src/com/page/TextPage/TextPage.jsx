@@ -21,6 +21,7 @@ import "chart.js/auto";
 //npm install --save react-loader-spinner
 import { Oval } from "react-loader-spinner";
 import HighlightedText from "../../highlight/HightLighted";
+import { alertClasses } from "@mui/material";
 
 
 const Div_txt = styled.div`
@@ -100,16 +101,21 @@ export default function TextPage(props) {
   };
 
   const handleConvert = () => {
+    if (inputValue === "") {
+      alert('텍스트를 입력해주세요');
+      return;
+    }
     setLoading(true);
     setConversionResult('');
     setNBGraph({ category: [], value: [] });
     setSVMGraph({ category: [], value: [] });
+    
     fetch("/predict", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({value: inputValue }),
+      body: JSON.stringify({value: inputValue}),
     })
       .then((response) => response.json())
       .then((data) => {
