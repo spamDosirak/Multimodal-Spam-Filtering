@@ -89,7 +89,12 @@ export default function VoicePage(props) {
             method: 'POST',
             body: formData
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('No String'); // 예상치 못한 오류 응답 처리
+                }
+                return response.json();
+            })
             .then(data => {
                 setConversionResult(data.text);
                 setNBResult(data.result1)
@@ -100,6 +105,9 @@ export default function VoicePage(props) {
             })
             .catch(error => {
                 console.error('Error:', error);
+                if (error instanceof Error && error.message === 'No String') {
+                    alert('음성에서 추출된 텍스트가 없습니다');
+                }
             });
     };
 
