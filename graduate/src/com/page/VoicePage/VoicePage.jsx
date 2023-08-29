@@ -203,7 +203,7 @@ export default function VoicePage(props) {
                 fontSize: "1vw",
                 margin: "0.5vw",
                 width: "80vw",
-                height: "95%",
+                height: "100%",
                 // border:"1px solid #0400ff",
                 // boxShadow : "0 0 10px 1px #0400ff",
             }}
@@ -243,10 +243,10 @@ export default function VoicePage(props) {
                         lineHeight: "1.8",
                         padding: "2vw",
                     }}>
-                        {(selectedResultType === "NB") && (NBgraph.category.length !== 0) 
-                            && (<HighlightedText text={conversionResult} queries={NBgraph.category} />)}
-                        {(selectedResultType === "SVM") && (SVMgraph.category.length !== 0) 
-                            && (<HighlightedText text={conversionResult} queries={SVMgraph.category} />)}
+                        {(selectedResultType === "NB") && (conversionResult) 
+                            && (<HighlightedText text={conversionResult} queries={NBgraph.category} probs={NBgraph.value} />)}
+                        {(selectedResultType === "SVM") && (conversionResult) 
+                            && (<HighlightedText text={conversionResult} queries={SVMgraph.category} probs={SVMgraph.value} />)}
                     </div>
 
                 </div>
@@ -261,6 +261,7 @@ export default function VoicePage(props) {
                         border : "none",
                         boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
                         color: "#6f6cd",
+                        cursor: "pointer",
                     }}
                     >
                     NB
@@ -275,6 +276,7 @@ export default function VoicePage(props) {
                         border : "none",
                         boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
                         color: "#6f6cd",
+                        cursor: "pointer",
                     }}
                     >
                     SVM
@@ -321,7 +323,7 @@ export default function VoicePage(props) {
                 </h3>
                 <div className="section" style={{ display: "flex", justifyContent: "center" }}>
                     {loading ? (
-                        <div style={{ display: "flex", justifyContent: "center" }}>
+                        <div style={{ display: "flex", justifyContent: "center", position: 'relative', top: '100%' }}>
                         <Oval
                             height={80}
                             width={80}
@@ -356,7 +358,7 @@ export default function VoicePage(props) {
                 </h3>
                 <div className="section" style={{ display: "flex", justifyContent: "center" }}>
                     {loading ? (
-                        <div style={{ display: "flex", justifyContent: "center" }}>
+                        <div style={{ display: "flex", justifyContent: "center", position: 'relative', top: '100%' }}>
                         <Oval
                             height={80}
                             width={80}

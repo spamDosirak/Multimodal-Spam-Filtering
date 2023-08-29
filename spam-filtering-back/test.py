@@ -62,14 +62,14 @@ def preprocess_svm(email):
 
 #NB
 def NB():
-	NB_vect = joblib.load('NB_vectorizer.pkl')
-	NB_model = joblib.load('NB_model.pkl')
+	NB_vect = joblib.load('NB_vectorizer_ex.pkl')
+	NB_model = joblib.load('NB_model_ex.pkl')
 	return(NB_vect, NB_model)
 
 #SVM
 def SVM():
-	svm_vect = joblib.load('svm_vectorizer.pkl')
-	svm_model = joblib.load('svm_model.pkl')
+	svm_vect = joblib.load('svm_vectorizer_ex.pkl')
+	svm_model = joblib.load('svm_model_ex.pkl')
 	return(svm_vect, svm_model)
 
 
@@ -119,17 +119,9 @@ def convertImage():
 	for field in result['images'][0]['fields']:
 		text += field['inferText'] + ' '
 	#print(text)
+	res = predict(text)
 	
-	cv1 = NB()[0]
-	vect1 = cv1.transform([text]).toarray()
-	my_prediction1 = NB()[1].predict(vect1)  #NB의 clf.predict(vect)
-	
-	cv2 = SVM()[0]
-	vect2 = cv2.transform([text]).toarray()
-	my_prediction2 = SVM()[1].predict(vect2)  #NB의 clf.predict(vect)
-	
-	# 처리 결과를 'result' 필드에 담아서 JSON 응답으로 반환
-	return jsonify({'text': text, 'result1': '스팸' if my_prediction1 == 'spam' else '햄', 'result2': '스팸' if my_prediction2 == 'spam' else '햄'})
+	return res
 
 
 #Audio -> Text
@@ -146,8 +138,7 @@ def saveAudio():
     
 def convertAudio(audio_file):
     from google.cloud import speech
-    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:\stt-test-key.json"
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:/users/82105/stt-test-key.json"
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:\stt-test-key.json"
     client = speech.SpeechClient()
     #file_name = os.path.join(os.path.dirname(__file__), ".", "file.wav")
     with io.open(audio_file, "rb") as audio_file:
