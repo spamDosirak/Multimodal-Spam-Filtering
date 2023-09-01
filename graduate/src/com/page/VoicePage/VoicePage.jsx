@@ -105,6 +105,7 @@ export default function VoicePage(props) {
             })
             .catch(error => {
                 console.error('Error:', error);
+                setLoading(false);
                 if (error instanceof Error && error.message === 'No String') {
                     alert('음성에서 추출된 텍스트가 없습니다');
                 }

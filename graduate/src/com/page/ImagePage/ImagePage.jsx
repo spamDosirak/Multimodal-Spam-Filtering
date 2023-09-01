@@ -91,6 +91,8 @@ export default function ImagePage(props) {
             })
             .catch((error) => {
                 // 에러 처리
+                console.error('Error:', error);
+                setLoading(false);
                 if (error instanceof Error && error.message === 'No String') {
                     alert('이미지에서 추출된 텍스트가 없습니다');
                 }

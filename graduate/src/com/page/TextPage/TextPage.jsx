@@ -130,6 +130,8 @@ export default function TextPage(props) {
       })
       .catch((error) => {
         // 에러 처리
+        console.error('Error:', error);
+        setLoading(false);
       });
   };
 
