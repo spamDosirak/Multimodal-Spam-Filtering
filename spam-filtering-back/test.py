@@ -74,7 +74,6 @@ def SVM():
 
 
 
-
 #Image -> Text 후 Spam 검사
 
 @app.route('/convert/image', methods=['POST'])
@@ -119,7 +118,7 @@ def convertImage():
 	for field in result['images'][0]['fields']:
 		text += field['inferText'] + ' '
 	#print(text)
-	res = predict(text)
+	res = total_predict(text)
 	
 	return res
 
@@ -132,7 +131,7 @@ def saveAudio():
     audio.save(audio_file)
     
     converted_text = convertAudio('audio.wav')
-    result = predict(converted_text)
+    result = total_predict(converted_text)
     print(result)
     return result
     
@@ -198,7 +197,7 @@ def recorder():
     waveFile.writeframes(b''.join(frames))
     waveFile.close()
     converted_text = convertAudio(WAVE_OUTPUT_FILENAME)
-    result = predict(converted_text)
+    result = total_predict(converted_text)
     return result
 
 @app.route('/convert/stop_record', methods=['POST'])
@@ -210,15 +209,17 @@ def stop_record():
 
 #Text Spam 검사
 @app.route('/predict',methods=['POST'])
-def txt_pedict():
+def pedict():
 	if request.method == 'POST':
 		data = request.get_json()['value']
-		result = predict(data)
+		result = total_predict(data)
 		print(result)
 		return result
 
-def predict(text):
+def total_predict(text):
 	value = text
+	if text == "":
+		raise ValueError("No String")
 	value2 = preprocess_svm(text)
 
 	#NB predict
