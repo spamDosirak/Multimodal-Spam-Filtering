@@ -221,7 +221,7 @@ def total_predict(text):
 	if text == "":
 		raise ValueError("No String")
 	value2 = preprocess_svm(text)
-
+	'''
 	#NB predict
 	NB_vect = NB()[0]
 	NB_model = NB()[1]
@@ -288,6 +288,33 @@ def total_predict(text):
 		'result2': '스팸' if my_prediction2 == 'spam' else '햄', 
 		'vocabs1' : l1, 
 		'vocabs2' : l2})
+	'''
+	return jsonify({
+		'text' : "hello nice to meet you",
+		'result1': '스팸',
+		'result2': '스팸',
+		'vocabs1' : {
+			"category": [
+				"hello",
+				"you",
+				"nice"
+			],
+			"value": [
+				16.08,
+				10.02,
+				7.89
+			]
+		}, 
+		'vocabs2' : {
+				"category": [
+					"hello"
+				],
+				"value": [
+					7.21
+				]
+		}
+	})
+
 
 
 @app.route('/')
