@@ -221,7 +221,7 @@ def total_predict(text):
 	if text == "":
 		raise ValueError("No String")
 	value2 = preprocess_svm(text)
-	'''
+
 	#NB predict
 	NB_vect = NB()[0]
 	NB_model = NB()[1]
@@ -251,20 +251,20 @@ def total_predict(text):
 		if i[0] not in l1['category'] :
 			l1['category'].append(str(i[0]))
 			l1['value'].append((round(i[1]*100,2)))
-
+	print("executed")
 	#SVM predict
 	svm_vect = SVM()[0]
 	svm_model = SVM()[1]
-
+	print("executed2")
 	cv2 = svm_vect
 	vect2 = cv2.transform([value2]).toarray()
 	accuracy2 = svm_model.predict_proba(vect2)[0,1]
-
+	print("executed3")
 	# 단어들
 	pipeline2 = make_pipeline(cv2, svm_model)  # 텍스트 데이터 벡터화 및 분류 모델링
 	class_names = ['0', '1']
 	explainer2 = LimeTextExplainer(class_names=class_names)
-
+	print("executed4")
 	exp2 = explainer2.explain_instance(value2, pipeline2.predict_proba, num_features=6)
 	print(exp2.as_list())
 	sorted_exp2 = sorted(exp2.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
@@ -288,33 +288,6 @@ def total_predict(text):
 		'result2': '스팸' if my_prediction2 == 'spam' else '햄', 
 		'vocabs1' : l1, 
 		'vocabs2' : l2})
-	'''
-	return jsonify({
-		'text' : "hello nice to meet you",
-		'result1': '스팸',
-		'result2': '스팸',
-		'vocabs1' : {
-			"category": [
-				"hello",
-				"you",
-				"nice"
-			],
-			"value": [
-				16.08,
-				10.02,
-				7.89
-			]
-		}, 
-		'vocabs2' : {
-				"category": [
-					"hello"
-				],
-				"value": [
-					7.21
-				]
-		}
-	})
-
 
 
 @app.route('/')
