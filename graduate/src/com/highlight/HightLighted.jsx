@@ -1,11 +1,12 @@
 import React from 'react';
 
-export default function HighlightedText({ text, queries, probs }) {
+export default function HighlightedText({ text, queries, probs, result }) {
     const [hoveredWord, setHoveredWord] = React.useState(null);
 
     if (!queries || queries.length === 0) {
         return <>{text}</>; // queries가 없거나 빈 배열인 경우 원래 텍스트를 그대로 반환
     }
+    const highlightColor = result === '스팸' ? '#ff9968' : '#99ccff';
 
     const highlight = (part) => {
         for (const query of queries) {
@@ -15,7 +16,12 @@ export default function HighlightedText({ text, queries, probs }) {
                 regex.test(part) ? (
                 <span 
                     style={{ 
-                        backgroundColor: 'yellow', position: 'relative', display: 'inline-block', margin: '2px 0px'
+                        backgroundColor: highlightColor, 
+                        position: 'relative', 
+                        display: 'inline-block', 
+                        margin: '2px 0px', 
+                        borderRadius: '10px',
+                        padding: '0px 5px'
                     }} 
                     key={index}
                     onMouseEnter={() => setHoveredWord(query)}

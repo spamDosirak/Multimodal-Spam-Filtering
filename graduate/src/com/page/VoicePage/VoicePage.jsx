@@ -147,11 +147,11 @@ export default function VoicePage(props) {
 
     const NBchartData = {
 
-        labels: NBgraph.category,
+        labels: NBgraph.category.slice(0, 5),
         datasets: [
             {
                 label: "NB : Top 5 Words",
-                data: NBgraph.value,
+                data: NBgraph.value.slice(0, 5),
                 backgroundColor: "#12c2e9",
                 datalabels: {
                 color: "black",
@@ -163,11 +163,11 @@ export default function VoicePage(props) {
     };
     const SVMchartData = {
     
-        labels: SVMgraph.category,
+        labels: SVMgraph.category.slice(0, 5),
         datasets: [
             {
             label: "SVM : Top 5 Words",
-            data: SVMgraph.value,
+            data: SVMgraph.value.slice(0, 5),
             backgroundColor: "#c471ed",
             datalabels: {
                 color: "black",
@@ -253,9 +253,11 @@ export default function VoicePage(props) {
                         padding: "2vw",
                     }}>
                         {(selectedResultType === "NB") && (conversionResult) 
-                            && (<HighlightedText text={conversionResult} queries={NBgraph.category} probs={NBgraph.value} />)}
+                            && (<HighlightedText text={conversionResult} queries={NBgraph.category} 
+                                                    probs={NBgraph.value} result={NBResult} />)}
                         {(selectedResultType === "SVM") && (conversionResult) 
-                            && (<HighlightedText text={conversionResult} queries={SVMgraph.category} probs={SVMgraph.value} />)}
+                            && (<HighlightedText text={conversionResult} queries={SVMgraph.category}
+                                                    probs={SVMgraph.value} result={NBResult} />)}
                     </div>
 
                 </div>

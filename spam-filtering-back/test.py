@@ -238,11 +238,24 @@ def total_predict(text):
 
 	exp1 = explainer.explain_instance(value, pipeline.predict_proba, num_features=6) #NB(df)[4]는 NB의 explainer, [3]은 NB pipeline
 	print(exp1.as_list())
-	sorted_exp1 = sorted(exp1.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
-	positive_sorted_exp1 = [item for item in sorted_exp1 if item[1] > 0] # 스팸인것만 (양수) 남기기
+
+	### 스팸 단어 보이기
+	#sorted_exp1 = sorted(exp1.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
+	#positive_sorted_exp1 = [item for item in sorted_exp1 if item[1] > 0] # 스팸인것만 (양수) 남기기
+	### 
+
 	my_prediction1 = NB_model.predict(vect) #NB(df)[1]은 NB clf
+
+	### 스팸이면 스팸 단어, 햄이면 햄 단어 보이기
+	if my_prediction1 == 'spam' :
+		sorted_exp1 = sorted(exp1.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
+		positive_sorted_exp1 = [item for item in sorted_exp1 if item[1] > 0] # 스팸인것만 (양수) 남기기
+	else : 
+		sorted_exp1 = sorted(exp1.as_list(), key=lambda x: x[1], reverse=False) #스팸 의심 높은것부터 나열
+		positive_sorted_exp1 = [item for item in sorted_exp1 if item[1] < 0] # 햄인것만 (음수) 남기기
 	print(sorted_exp1)
 	print(my_prediction1)
+	### 
 	
 	import json
 	s = list(positive_sorted_exp1)
@@ -267,11 +280,25 @@ def total_predict(text):
 	print("executed4")
 	exp2 = explainer2.explain_instance(value2, pipeline2.predict_proba, num_features=6)
 	print(exp2.as_list())
-	sorted_exp2 = sorted(exp2.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
-	positive_sorted_exp2 = [item for item in sorted_exp2 if item[1] > 0] # 스팸인것만 (양수) 남기기
+	
+	### 스팸 단어 보이기
+	#sorted_exp2 = sorted(exp2.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
+	#positive_sorted_exp2 = [item for item in sorted_exp2 if item[1] > 0] # 스팸인것만 (양수) 남기기
+	###
+	
 	my_prediction2 = svm_model.predict(vect2)
+	### 스팸이면 스팸 단어, 햄이면 햄 단어 보이기
+	#'''
+	if my_prediction2 == 'spam' :
+		sorted_exp2 = sorted(exp2.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
+		positive_sorted_exp2 = [item for item in sorted_exp2 if item[1] > 0] # 스팸인것만 (양수) 남기기
+	else : 
+		sorted_exp2 = sorted(exp2.as_list(), key=lambda x: x[1], reverse=False) #스팸 의심 높은것부터 나열
+		positive_sorted_exp2 = [item for item in sorted_exp2 if item[1] < 0] # 햄인것만 (음수) 남기기
 	print(sorted_exp2)
 	print(my_prediction2)
+	#'''
+	###
 
 
 	s2 = positive_sorted_exp2
