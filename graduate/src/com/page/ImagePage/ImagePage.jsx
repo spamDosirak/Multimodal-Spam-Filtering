@@ -74,7 +74,12 @@ export default function ImagePage(props) {
             method: "POST",
             body: formData,
         })
-            .then((response) => response.json())
+            .then((response) => { 
+                if (!response.ok) {
+                    throw new Error('No String'); // 예상치 못한 오류 응답 처리
+                }
+                return response.json();
+            })
             .then((data) => {
                 setConversionResult(data.text);
                 setNBResult(data.result1)
@@ -86,6 +91,11 @@ export default function ImagePage(props) {
             })
             .catch((error) => {
                 // 에러 처리
+                console.error('Error:', error);
+                setLoading(false);
+                if (error instanceof Error && error.message === 'No String') {
+                    alert('이미지에서 추출된 텍스트가 없습니다');
+                }
             });
     };
 
@@ -98,11 +108,11 @@ export default function ImagePage(props) {
     };
 
     const NBchartData = {
-        labels: NBgraph.category,
+        labels: NBgraph.category.slice(0, 5),
         datasets: [
             {
                 label: "NB : Top 5 Words",
-                data: NBgraph.value,
+                data: NBgraph.value.slice(0, 5),
                 backgroundColor: "#FF5F6D",
                 datalabels: {
                     color: "black",
@@ -113,11 +123,11 @@ export default function ImagePage(props) {
         ],
     };
     const SVMchartData = {
-        labels: SVMgraph.category,
+        labels: SVMgraph.category.slice(0, 5),
         datasets: [
             {
                 label: "SVM : Top 5 Words",
-                data: SVMgraph.value,
+                data: SVMgraph.value.slice(0, 5),
                 backgroundColor: "#FFC371",
                 datalabels: {
                     color: "black",
@@ -233,9 +243,11 @@ export default function ImagePage(props) {
                         }}
                     >
                         {(selectedResultType === "NB") && (conversionResult) 
-                            && (<HighlightedText text={conversionResult} queries={NBgraph.category} probs={NBgraph.value} />)}
+                            && (<HighlightedText text={conversionResult} queries={NBgraph.category} 
+                                                    probs={NBgraph.value} result={NBResult} />)}
                         {(selectedResultType === "SVM") && (conversionResult) 
-                            && (<HighlightedText text={conversionResult} queries={SVMgraph.category} probs={SVMgraph.value} />)}
+                            && (<HighlightedText text={conversionResult} queries={SVMgraph.category} 
+                                                    probs={SVMgraph.value} result={SVMResult} />)}
                     </div>
                     <div>
                         <button

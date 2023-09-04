@@ -74,7 +74,6 @@ def SVM():
 
 
 
-
 #Image -> Text 후 Spam 검사
 
 @app.route('/convert/image', methods=['POST'])
@@ -119,7 +118,7 @@ def convertImage():
 	for field in result['images'][0]['fields']:
 		text += field['inferText'] + ' '
 	#print(text)
-	res = predict(text)
+	res = total_predict(text)
 	
 	return res
 
@@ -132,7 +131,7 @@ def saveAudio():
     audio.save(audio_file)
     
     converted_text = convertAudio('audio.wav')
-    result = predict(converted_text)
+    result = total_predict(converted_text)
     print(result)
     return result
     
@@ -198,7 +197,7 @@ def recorder():
     waveFile.writeframes(b''.join(frames))
     waveFile.close()
     converted_text = convertAudio(WAVE_OUTPUT_FILENAME)
-    result = predict(converted_text)
+    result = total_predict(converted_text)
     return result
 
 @app.route('/convert/stop_record', methods=['POST'])
@@ -210,15 +209,17 @@ def stop_record():
 
 #Text Spam 검사
 @app.route('/predict',methods=['POST'])
-def txt_pedict():
+def pedict():
 	if request.method == 'POST':
 		data = request.get_json()['value']
-		result = predict(data)
+		result = total_predict(data)
 		print(result)
 		return result
 
-def predict(text):
+def total_predict(text):
 	value = text
+	if text == "":
+		raise ValueError("No String")
 	value2 = preprocess_svm(text)
 
 	#NB predict
@@ -237,11 +238,24 @@ def predict(text):
 
 	exp1 = explainer.explain_instance(value, pipeline.predict_proba, num_features=6) #NB(df)[4]는 NB의 explainer, [3]은 NB pipeline
 	print(exp1.as_list())
-	sorted_exp1 = sorted(exp1.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
-	positive_sorted_exp1 = [item for item in sorted_exp1 if item[1] > 0] # 스팸인것만 (양수) 남기기
+
+	### 스팸 단어 보이기
+	#sorted_exp1 = sorted(exp1.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
+	#positive_sorted_exp1 = [item for item in sorted_exp1 if item[1] > 0] # 스팸인것만 (양수) 남기기
+	### 
+
 	my_prediction1 = NB_model.predict(vect) #NB(df)[1]은 NB clf
+
+	### 스팸이면 스팸 단어, 햄이면 햄 단어 보이기
+	if my_prediction1 == 'spam' :
+		sorted_exp1 = sorted(exp1.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
+		positive_sorted_exp1 = [item for item in sorted_exp1 if item[1] > 0] # 스팸인것만 (양수) 남기기
+	else : 
+		sorted_exp1 = sorted(exp1.as_list(), key=lambda x: x[1], reverse=False) #스팸 의심 높은것부터 나열
+		positive_sorted_exp1 = [item for item in sorted_exp1 if item[1] < 0] # 햄인것만 (음수) 남기기
 	print(sorted_exp1)
 	print(my_prediction1)
+	### 
 	
 	import json
 	s = list(positive_sorted_exp1)
@@ -250,27 +264,41 @@ def predict(text):
 		if i[0] not in l1['category'] :
 			l1['category'].append(str(i[0]))
 			l1['value'].append((round(i[1]*100,2)))
-
+	print("executed")
 	#SVM predict
 	svm_vect = SVM()[0]
 	svm_model = SVM()[1]
-
+	print("executed2")
 	cv2 = svm_vect
 	vect2 = cv2.transform([value2]).toarray()
 	accuracy2 = svm_model.predict_proba(vect2)[0,1]
-
+	print("executed3")
 	# 단어들
 	pipeline2 = make_pipeline(cv2, svm_model)  # 텍스트 데이터 벡터화 및 분류 모델링
 	class_names = ['0', '1']
 	explainer2 = LimeTextExplainer(class_names=class_names)
-
+	print("executed4")
 	exp2 = explainer2.explain_instance(value2, pipeline2.predict_proba, num_features=6)
 	print(exp2.as_list())
-	sorted_exp2 = sorted(exp2.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
-	positive_sorted_exp2 = [item for item in sorted_exp2 if item[1] > 0] # 스팸인것만 (양수) 남기기
+	
+	### 스팸 단어 보이기
+	#sorted_exp2 = sorted(exp2.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
+	#positive_sorted_exp2 = [item for item in sorted_exp2 if item[1] > 0] # 스팸인것만 (양수) 남기기
+	###
+	
 	my_prediction2 = svm_model.predict(vect2)
+	### 스팸이면 스팸 단어, 햄이면 햄 단어 보이기
+	#'''
+	if my_prediction2 == 'spam' :
+		sorted_exp2 = sorted(exp2.as_list(), key=lambda x: x[1], reverse=True) #스팸 의심 높은것부터 나열
+		positive_sorted_exp2 = [item for item in sorted_exp2 if item[1] > 0] # 스팸인것만 (양수) 남기기
+	else : 
+		sorted_exp2 = sorted(exp2.as_list(), key=lambda x: x[1], reverse=False) #스팸 의심 높은것부터 나열
+		positive_sorted_exp2 = [item for item in sorted_exp2 if item[1] < 0] # 햄인것만 (음수) 남기기
 	print(sorted_exp2)
 	print(my_prediction2)
+	#'''
+	###
 
 
 	s2 = positive_sorted_exp2
