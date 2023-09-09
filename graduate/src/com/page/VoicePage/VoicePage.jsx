@@ -78,6 +78,10 @@ export default function VoicePage(props) {
         setSelectedAudioFile(event.target.files[0]);
     };
     const convertAudio = () => {
+        if (!selectedAudioFile) {
+            alert('음성 파일을 선택해주세요'); // Display an error message if no image is selected
+            return; // Exit the function early
+        }
         const formData = new FormData();
         formData.append('audio', selectedAudioFile);
         setLoading(true);
