@@ -203,13 +203,13 @@ export default function ImagePage(props) {
                     style={{
                         margin: "1vw 1vw 1vw 1vw",
                         padding: "2vw 0vw 1vw 0vw",
-                        height: "60%",
+                        height: "50%",
                         width: "90%",
                         // border: "1px solid rgb(212, 210, 224)",
                     }}
                 >
                     <img
-                        src={imgFile}
+                        src={imgFile ? imgFile : "https://github.com/spamDosirak/Multimodal-Spam-Filtering/assets/82564901/702f20df-afd3-49cf-89bb-a4b6c9350502"}
                         style={{
                             height: "40vh",
                             width: "20vw",
