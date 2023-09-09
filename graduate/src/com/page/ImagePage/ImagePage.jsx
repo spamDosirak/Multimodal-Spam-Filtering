@@ -64,6 +64,10 @@ export default function ImagePage(props) {
     };
 
     const convertImage = () => {
+        if (!selectedImageFile) {
+            alert('이미지를 선택해주세요');
+            return; 
+        }
         const formData = new FormData();
         formData.append("image", selectedImageFile);
         setLoading(true);
