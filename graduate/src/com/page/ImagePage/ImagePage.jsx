@@ -4,10 +4,9 @@ import { useRef } from "react";
 
 import "../Page.css";
 import HighlightedText from "../../highlight/HightLighted";
-import { Bar, Doughnut } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
 import { Oval } from "react-loader-spinner";
-import { TextInput, Button, FAB } from "react-native-paper";
 
 //   border: 1px solid rgb(212, 210, 224);
 const Div_txt = styled.div`
@@ -64,6 +63,10 @@ export default function ImagePage(props) {
     };
 
     const convertImage = () => {
+        if (!selectedImageFile) {
+            alert('이미지를 선택해주세요');
+            return; 
+        }
         const formData = new FormData();
         formData.append("image", selectedImageFile);
         setLoading(true);
@@ -96,6 +99,9 @@ export default function ImagePage(props) {
                 if (error instanceof Error && error.message === 'No String') {
                     alert('이미지에서 추출된 텍스트가 없습니다');
                 }
+                else {
+                    alert("에러가 발생했습니다");
+                }
             });
     };
 
@@ -111,7 +117,7 @@ export default function ImagePage(props) {
         labels: NBgraph.category.slice(0, 5),
         datasets: [
             {
-                label: "NB : Top 5 Words",
+                label: "NB : " + NBResult + " words",
                 data: NBgraph.value.slice(0, 5),
                 backgroundColor: "#FF5F6D",
                 datalabels: {
@@ -126,7 +132,7 @@ export default function ImagePage(props) {
         labels: SVMgraph.category.slice(0, 5),
         datasets: [
             {
-                label: "SVM : Top 5 Words",
+                label: "SVM : " + SVMResult + " words",
                 data: SVMgraph.value.slice(0, 5),
                 backgroundColor: "#FFC371",
                 datalabels: {
@@ -199,18 +205,19 @@ export default function ImagePage(props) {
                     style={{
                         margin: "1vw 1vw 1vw 1vw",
                         padding: "2vw 0vw 1vw 0vw",
-                        height: "60%",
+                        height: "50%",
                         width: "90%",
                         // border: "1px solid rgb(212, 210, 224)",
                     }}
                 >
                     <img
-                        src={imgFile}
+                        src={imgFile ? imgFile : "https://github.com/spamDosirak/Multimodal-Spam-Filtering/assets/82564901/702f20df-afd3-49cf-89bb-a4b6c9350502"}
                         style={{
                             height: "40vh",
                             width: "20vw",
                             // border: "1px solid rgb(212, 210, 224)",
                         }}
+                        alt = "no image"
                     />
                 </div>
                 <button className="imageTestBtn" onClick={convertImage}>
@@ -325,7 +332,7 @@ export default function ImagePage(props) {
                         </div>
                     ) : null}
 
-                    {NBgraph.category.length != 0 && (
+                    {NBgraph.category.length !== 0 && (
                         <div style={{ width: "100%", height: "120%" }}>
                             <div
                                 style={{
@@ -383,7 +390,7 @@ export default function ImagePage(props) {
                         </div>
                     ) : null}
 
-                    {SVMgraph.category.length != 0 && (
+                    {SVMgraph.category.length !== 0 && (
                         <div style={{ width: "100%", height: "120%" }}>
                             <div
                                 style={{

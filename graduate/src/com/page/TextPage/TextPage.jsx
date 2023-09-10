@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { useState, PureComponent } from "react";
+import { useState } from "react";
 import "../Page.css";
 
 //이 순서대로 깔아주세용
@@ -21,14 +21,13 @@ import "chart.js/auto";
 //npm install --save react-loader-spinner
 import { Oval } from "react-loader-spinner";
 import HighlightedText from "../../highlight/HightLighted";
-import { alertClasses } from "@mui/material";
 
 
 const Div_txt = styled.div`
   width: 95%;
   height: 20%;
   float: left;
- 
+
 
   display: flex;
   padding: 2vw 2vw 2vw 2vw;
@@ -38,7 +37,7 @@ const Div_txtShow = styled.div`
   width: 40%;
   height: 70%;
   float: left;
- 
+
   margin: 0px 4px;
   
 `;
@@ -132,6 +131,7 @@ export default function TextPage(props) {
         // 에러 처리
         console.error('Error:', error);
         setLoading(false);
+          alert("에러가 발생했습니다");
       });
   };
 
@@ -144,7 +144,7 @@ export default function TextPage(props) {
     labels: NBgraph.category.slice(0, 5),
     datasets: [
       {
-        label: "NB : Top 5 Words",
+        label: "NB : " + NBResult + " words",
         data: NBgraph.value.slice(0, 5),
         backgroundColor: "#12c2e9",
         datalabels: {
@@ -160,7 +160,7 @@ export default function TextPage(props) {
     labels: SVMgraph.category.slice(0, 5),
     datasets: [
       {
-        label: "SVM : Top 5 Words",
+        label: "SVM : " + SVMResult + " words", 
         data: SVMgraph.value.slice(0, 5),
         backgroundColor: "#c471ed",
         datalabels: {
@@ -319,7 +319,7 @@ export default function TextPage(props) {
             </div>
           ) : null}
 
-          {NBgraph.category.length != 0 && (
+          {NBgraph.category.length !== 0 && (
             <div style={{ width: "100%", height: "120%" }}>
               <div style={{ width: "35vw", height: "11vw", padding: "0vw 2vw 0vw 8vw" }}>
                 <Bar data={NBchartData} options={options} style={{}
@@ -354,7 +354,7 @@ export default function TextPage(props) {
             </div>
           ) : null}
 
-          {SVMgraph.category.length != 0 && (
+          {SVMgraph.category.length !== 0 && (
             <div style={{ width: "100%", height: "120%" }}>
               <div style={{ width: "35vw", height: "11vw", padding: "0vw 2vw 0vw 8vw" }}>
                 <Bar data={SVMchartData} options={options} style={{}

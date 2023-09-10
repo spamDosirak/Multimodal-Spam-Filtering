@@ -199,11 +199,11 @@
     font-size: large;
     font-family: "Montserrat", sans-serif;
     font-weight: bold;
-
+    margin: 10px 0px;
 }
 
 .voiceTestBtn:hover {
-
+    margin: 10px 0px;
     box-shadow: -6px -6px 10px rgba(255, 255, 255, 0.8),
         6px 6px 10px rgba(0, 0, 0, 0.2);
     color: #1D976C;
@@ -238,7 +238,6 @@
     border: none;
     text-align: center;
     cursor: pointer;
-    margin : 1vw 2vw 0px 0px;
     box-shadow: -6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2);
     color: #1D976C;
     font-size: small;
@@ -309,7 +308,7 @@
     cursor: pointer;
     margin : 1vw 0px 0px 0px;
     box-shadow: -6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2);
-    color: #1D976C;
+    color: #6fDB9E;
     font-size: small;
     font-family: "Montserrat", sans-serif;
     font-weight: bold;
@@ -321,13 +320,27 @@
     background-color: red;
     border-radius: 50%;
     animation: pulse 1s infinite;
-  }
-  
-  @keyframes pulse {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.2);
-    }
-  }
+}
+
+@keyframes pulse {
+0%, 100% {
+    transform: scale(1);
+}
+50% {
+    transform: scale(1.2);
+}
+}
+
+.progress {
+    appearance: none;
+}
+.progress::-webkit-progress-bar {
+    background:#f0f0f0;
+    border-radius: 8px;
+    box-shadow: inset 3px 3px 10px #ccc;
+}
+.progress::-webkit-progress-value {
+    border-radius: 8px;
+    background: -webkit-linear-gradient(to right, #73d797, #3ea87d);
+    background: linear-gradient(to right, #73d797, #3ea87d);
+}
