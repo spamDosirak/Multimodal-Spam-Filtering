@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { useState, PureComponent } from "react";
+import { useState, useEffect } from "react";
 import "../Page.css";
 
 //이 순서대로 깔아주세용
@@ -21,6 +21,7 @@ import "chart.js/auto";
 //npm install --save react-loader-spinner
 import { Oval } from "react-loader-spinner";
 import HighlightedText from "../../highlight/HightLighted";
+import { alignProperty } from "@mui/material/styles/cssUtils";
 
 
 const Div_txt = styled.div`
@@ -72,6 +73,8 @@ export default function VoicePage(props) {
     const [SVMgraph, setSVMGraph] = useState({ category: [], value: [] });
     const [selectedResultType, setSelectedResultType] = useState("NB");
     const [loading, setLoading] = useState(false);
+    const [isRecording, setIsRecording] = useState(false);
+    const [progress, setProgress] = useState(0);
 
 
     const handleAudioFileChange = (event) => {
@@ -120,8 +123,15 @@ export default function VoicePage(props) {
         setNBGraph({ category: [], value: [] });
         setSVMGraph({ category: [], value: [] });
         setConversionResult('');
+        setProgress(0);
+        setIsRecording(true);
         fetch('/convert/start_record', { method: 'POST' })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('No String'); // 예상치 못한 오류 응답 처리
+                }
+                return response.json();
+            })
             .then(data => {
                 setConversionResult(data.text);
                 setNBResult(data.result1)
@@ -130,16 +140,35 @@ export default function VoicePage(props) {
                 setSVMGraph(data.vocabs2);
                 setLoading(false);
             })
-            .catch(error => console.error(error));
+            .catch(error => {
+                console.error('Error:', error);
+                setLoading(false);
+                if (error instanceof Error && error.message === 'No String') {
+                    alert('음성에서 추출된 텍스트가 없습니다');
+                }
+            });
     };
 
     const handleStopRecording = () => {
         setLoading(true);
+        setIsRecording(false);
         fetch('/convert/stop_record', { method: 'POST' })
             .then(response => response.text())
             .then(data => console.log(data))
             .catch(error => console.error(error));
     };
+    
+    useEffect(() => {
+        if (isRecording) {
+            const startTime = new Date().getTime();
+            const interval = setInterval(() => {
+            const currentTime = new Date().getTime() - startTime;
+            setProgress(currentTime);
+          }, 100); // 100ms마다 업데이트, 원하는 간격으로 수정 가능
+    
+          return () => clearInterval(interval); // 녹음 중지 시 interval 정리
+        }
+    }, [isRecording]);
 
     const handleNBResult = () => {
         setSelectedResultType("NB");
@@ -222,24 +251,54 @@ export default function VoicePage(props) {
             }}
         >
             <Div_txt>
-                <div className="input-section">
-                    <div className="vfilebox">
-                        <label for="vcfile" style={{ width: "100px", height: "100%" }}>
-                            UPLOAD FILE
-                        </label>
-                        <input type="file" id="vcfile" accept="audio/*" onChange={handleAudioFileChange} />
-                        <button className="voiceRecBtn" onClick={handleStartRecording}>녹음 시작</button>
-                        <button className="voiceStopBtn" onClick={handleStopRecording}>녹음 종료</button>
-                    </div>
+                <div style={{display : "flex", margin: "30px 0px 20px 0px", justifyContent: "center"}}>
+                    <span style={{
+                        width : "45%"
+                    }}>
+                        <div className="input-section" 
+                            style={ {
+                                margin : "10px"
+                            }}>
+                            {!isRecording && <button style={{margin : "0px 5px"}} className="voiceRecBtn" onClick={handleStartRecording}> Start Recording </button>}
+                            {isRecording && <button style={{margin : "0px 5px"}} className="voiceStopBtn" onClick={handleStopRecording}> Stop Recording </button>}
+                        </div>
+                        <div>
+                        <progress 
+                            className = "progress"
+                            value={progress} 
+                            max="30000" >
+                        </progress>
+                        </div>
+                    </span>
+                    
+                    <span style={{
+                        width : "45%"
+                    }}>
+                        <div className="input-section"
+                            style={{
+                                margin : "10px"
+                            }}>
+                            <div className="vfilebox">
+                                <label for="vcfile" style={{ width: "100px", height: "100%" }}>
+                                    UPLOAD FILE
+                                </label>
+                                <input type="file" id="vcfile" accept="audio/*" onChange={handleAudioFileChange} />
+                            </div>
+                        </div>
+                        <div>
+                            Selected File: {' '}
+                            {selectedAudioFile && (
+                                <strong>{selectedAudioFile.name}</strong>
+                            )}  
+                        </div>
+                    </span>
                 </div>
-
                 <button className="voiceTestBtn" onClick={convertAudio}>VERIFY SPAM</button>
 
                 <div style={{
-                    margin: "20px",
-
+                    margin: "20px 20px 5px 25px",
                     width: "90%",
-                    height: "70%",
+                    height: "60%",
                     background: " #f8f8f8",
                     borderRadius: "32px",
                     boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
@@ -263,39 +322,39 @@ export default function VoicePage(props) {
                             && (<HighlightedText text={conversionResult} queries={SVMgraph.category}
                                                     probs={SVMgraph.value} result={NBResult} />)}
                     </div>
-
-                </div>
-                <div>
-                    <button
-                    onClick={handleNBResult}
-                    style={{
-                        backgroundColor: selectedResultType === "NB" ? "#12c2e9" : "",
-                        padding : "5px 10px 5px 10px",
-                        margin: "0px 5px 10px 0px",
-                        borderRadius: "32px",
-                        border : "none",
-                        boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
-                        color: "#6f6cd",
-                        cursor: "pointer",
-                    }}
-                    >
-                    NB
-                    </button>
-                    <button
-                    onClick={handleSVMResult}
-                    style={{
-                        backgroundColor: selectedResultType === "SVM" ? "#c471ed" : "",
-                        padding : "5px 10px 5px 10px",
-                        margin: "0px 0px 10px 5px",
-                        borderRadius: "32px",
-                        border : "none",
-                        boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
-                        color: "#6f6cd",
-                        cursor: "pointer",
-                    }}
-                    >
-                    SVM
-                    </button>
+                    
+                    <div>
+                        <button
+                        onClick={handleNBResult}
+                        style={{
+                            backgroundColor: selectedResultType === "NB" ? "#12c2e9" : "",
+                            padding : "5px 10px 5px 10px",
+                            margin: "0px 5px 10px 0px",
+                            borderRadius: "32px",
+                            border : "none",
+                            boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
+                            color: "#6f6cd",
+                            cursor: "pointer",
+                        }}
+                        >
+                        NB
+                        </button>
+                        <button
+                        onClick={handleSVMResult}
+                        style={{
+                            backgroundColor: selectedResultType === "SVM" ? "#c471ed" : "",
+                            padding : "5px 10px 5px 10px",
+                            margin: "0px 0px 10px 5px",
+                            borderRadius: "32px",
+                            border : "none",
+                            boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
+                            color: "#6f6cd",
+                            cursor: "pointer",
+                        }}
+                        >
+                        SVM
+                        </button>
+                    </div>
                 </div>
 
             </Div_txt>
