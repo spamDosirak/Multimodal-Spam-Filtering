@@ -8,7 +8,6 @@ import "../Page.css";
 //npm install --save react-native-safe-area-context
 //npm install --save react-native-paper 
 //npm install --save react-native-web
-import { TextInput } from "react-native-paper";
 
 
 //그래프를 위한 import
@@ -21,7 +20,6 @@ import "chart.js/auto";
 //npm install --save react-loader-spinner
 import { Oval } from "react-loader-spinner";
 import HighlightedText from "../../highlight/HightLighted";
-import { alignProperty } from "@mui/material/styles/cssUtils";
 
 
 const Div_txt = styled.div`

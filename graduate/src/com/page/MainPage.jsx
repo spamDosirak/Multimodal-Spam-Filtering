@@ -1,7 +1,7 @@
 
 import styled from "styled-components";
-import React, { useState } from 'react';
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Sidebar from "../sidebar/Sidebar";
 

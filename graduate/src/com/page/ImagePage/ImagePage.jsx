@@ -4,10 +4,9 @@ import { useRef } from "react";
 
 import "../Page.css";
 import HighlightedText from "../../highlight/HightLighted";
-import { Bar, Doughnut } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
 import { Oval } from "react-loader-spinner";
-import { TextInput, Button, FAB } from "react-native-paper";
 
 //   border: 1px solid rgb(212, 210, 224);
 const Div_txt = styled.div`
@@ -215,6 +214,7 @@ export default function ImagePage(props) {
                             width: "20vw",
                             // border: "1px solid rgb(212, 210, 224)",
                         }}
+                        alt = "no image"
                     />
                 </div>
                 <button className="imageTestBtn" onClick={convertImage}>
@@ -329,7 +329,7 @@ export default function ImagePage(props) {
                         </div>
                     ) : null}
 
-                    {NBgraph.category.length != 0 && (
+                    {NBgraph.category.length !== 0 && (
                         <div style={{ width: "100%", height: "120%" }}>
                             <div
                                 style={{
@@ -387,7 +387,7 @@ export default function ImagePage(props) {
                         </div>
                     ) : null}
 
-                    {SVMgraph.category.length != 0 && (
+                    {SVMgraph.category.length !== 0 && (
                         <div style={{ width: "100%", height: "120%" }}>
                             <div
                                 style={{

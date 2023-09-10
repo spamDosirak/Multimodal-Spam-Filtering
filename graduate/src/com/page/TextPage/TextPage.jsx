@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { useState, PureComponent } from "react";
+import { useState } from "react";
 import "../Page.css";
 
 //이 순서대로 깔아주세용
@@ -21,14 +21,13 @@ import "chart.js/auto";
 //npm install --save react-loader-spinner
 import { Oval } from "react-loader-spinner";
 import HighlightedText from "../../highlight/HightLighted";
-import { alertClasses } from "@mui/material";
 
 
 const Div_txt = styled.div`
   width: 95%;
   height: 20%;
   float: left;
- 
+
 
   display: flex;
   padding: 2vw 2vw 2vw 2vw;
@@ -38,7 +37,7 @@ const Div_txtShow = styled.div`
   width: 40%;
   height: 70%;
   float: left;
- 
+
   margin: 0px 4px;
   
 `;
@@ -319,7 +318,7 @@ export default function TextPage(props) {
             </div>
           ) : null}
 
-          {NBgraph.category.length != 0 && (
+          {NBgraph.category.length !== 0 && (
             <div style={{ width: "100%", height: "120%" }}>
               <div style={{ width: "35vw", height: "11vw", padding: "0vw 2vw 0vw 8vw" }}>
                 <Bar data={NBchartData} options={options} style={{}
@@ -354,7 +353,7 @@ export default function TextPage(props) {
             </div>
           ) : null}
 
-          {SVMgraph.category.length != 0 && (
+          {SVMgraph.category.length !== 0 && (
             <div style={{ width: "100%", height: "120%" }}>
               <div style={{ width: "35vw", height: "11vw", padding: "0vw 2vw 0vw 8vw" }}>
                 <Bar data={SVMchartData} options={options} style={{}

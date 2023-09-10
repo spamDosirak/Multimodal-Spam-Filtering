@@ -1,9 +1,6 @@
+import React from 'react';
 
-import styled from "styled-components";
-
-import React, { useState } from 'react';
-
-import { useNavigate , Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./Sidebar.css";
 
 

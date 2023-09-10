@@ -47,8 +47,8 @@ export default function InfoPage(props) {
         speed: 500,
         slidesToShow: 1,
         slidesToScroll: 1
- 
-      };
+
+    };
 
     return (
     <div
