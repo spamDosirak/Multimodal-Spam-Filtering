@@ -183,7 +183,7 @@ export default function VoicePage(props) {
         labels: NBgraph.category.slice(0, 5),
         datasets: [
             {
-                label: "NB : Top 5 Words",
+                label: "NB : " + NBResult + " words",
                 data: NBgraph.value.slice(0, 5),
                 backgroundColor: "#12c2e9",
                 datalabels: {
@@ -199,7 +199,7 @@ export default function VoicePage(props) {
         labels: SVMgraph.category.slice(0, 5),
         datasets: [
             {
-            label: "SVM : Top 5 Words",
+            label: "SVM : " + SVMResult + " words",
             data: SVMgraph.value.slice(0, 5),
             backgroundColor: "#c471ed",
             datalabels: {
@@ -358,36 +358,6 @@ export default function VoicePage(props) {
                 </div>
 
             </Div_txt>
-
-            {/* <Div_txtShow>
-                <div style={{
-                    margin: "20px",
-
-                    width: "90%",
-                    height: "90%",
-                    background: " #f8f8f8",
-                    borderRadius: "32px",
-                    boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
-
-                }}>
-                    <div style={{
-                        //padding : "20px",
-                        overflow: "scroll",
-                        fontSize: "20px",
-                        scrollbarColor: "black",
-                        width: "80%",
-                        height: "80%",
-                        textAlign: "center",
-                        lineHeight: "1.8",
-                        padding: "2vw",
-                    }}>
-                        {conversionResult && (conversionResult.text)}
-                    </div>
-
-                </div>
-
-            </Div_txtShow> */}
-
 
             <Div_NB>
                 <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw" }}> NB ( Naive Bayes )

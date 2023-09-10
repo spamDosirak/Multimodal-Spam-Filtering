@@ -115,7 +115,7 @@ export default function ImagePage(props) {
         labels: NBgraph.category.slice(0, 5),
         datasets: [
             {
-                label: "NB : Top 5 Words",
+                label: "NB : " + NBResult + " words",
                 data: NBgraph.value.slice(0, 5),
                 backgroundColor: "#FF5F6D",
                 datalabels: {
@@ -130,7 +130,7 @@ export default function ImagePage(props) {
         labels: SVMgraph.category.slice(0, 5),
         datasets: [
             {
-                label: "SVM : Top 5 Words",
+                label: "SVM : " + SVMResult + " words",
                 data: SVMgraph.value.slice(0, 5),
                 backgroundColor: "#FFC371",
                 datalabels: {
