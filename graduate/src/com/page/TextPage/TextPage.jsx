@@ -131,6 +131,7 @@ export default function TextPage(props) {
         // 에러 처리
         console.error('Error:', error);
         setLoading(false);
+          alert("에러가 발생했습니다");
       });
   };
 

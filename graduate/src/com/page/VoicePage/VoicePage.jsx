@@ -79,8 +79,8 @@ export default function VoicePage(props) {
         setSelectedAudioFile(event.target.files[0]);
     };
     const convertAudio = () => {
-        if (!selectedAudioFile) {
-            alert('음성 파일을 선택해주세요'); // Display an error message if no image is selected
+        if (progress === 0 && !selectedAudioFile) {
+            alert('실시간 녹음 또는 음성 파일 선택을 해주세요'); // Display an error message if no image is selected
             return; // Exit the function early
         }
         const formData = new FormData();
@@ -89,6 +89,7 @@ export default function VoicePage(props) {
         setNBGraph({ category: [], value: [] });
         setSVMGraph({ category: [], value: [] });
         setConversionResult('');
+        setProgress(0);
 
         fetch('/convert/audio', {
             method: 'POST',
@@ -114,6 +115,9 @@ export default function VoicePage(props) {
                 if (error instanceof Error && error.message === 'No String') {
                     alert('음성에서 추출된 텍스트가 없습니다');
                 }
+                else {
+                    alert("에러가 발생했습니다");
+                }
             });
     };
 
@@ -121,6 +125,7 @@ export default function VoicePage(props) {
         setNBGraph({ category: [], value: [] });
         setSVMGraph({ category: [], value: [] });
         setConversionResult('');
+        setSelectedAudioFile(null);
         setProgress(0);
         setIsRecording(true);
         fetch('/convert/start_record', { method: 'POST' })
@@ -131,11 +136,6 @@ export default function VoicePage(props) {
                 return response.json();
             })
             .then(data => {
-                setConversionResult(data.text);
-                setNBResult(data.result1)
-                setSVMResult(data.result2)
-                setNBGraph(data.vocabs1);
-                setSVMGraph(data.vocabs2);
                 setLoading(false);
             })
             .catch(error => {
@@ -144,16 +144,21 @@ export default function VoicePage(props) {
                 if (error instanceof Error && error.message === 'No String') {
                     alert('음성에서 추출된 텍스트가 없습니다');
                 }
+                else {
+                    alert("에러가 발생했습니다");
+                }
             });
     };
 
     const handleStopRecording = () => {
-        setLoading(true);
         setIsRecording(false);
         fetch('/convert/stop_record', { method: 'POST' })
             .then(response => response.text())
             .then(data => console.log(data))
-            .catch(error => console.error(error));
+            .catch(error => {
+                console.error(error);
+                alert("에러가 발생했습니다");
+            });
     };
     
     useEffect(() => {

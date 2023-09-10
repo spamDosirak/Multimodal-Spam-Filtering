@@ -126,11 +126,15 @@ def convertImage():
 #Audio -> Text
 @app.route('/convert/audio', methods=['POST'])
 def saveAudio():
-    audio = request.files['audio']
-    audio_file = os.path.join(app.config['UPLOAD_FOLDER'], 'audio.wav')
-    audio.save(audio_file)
+    if request.files:
+        audio = request.files['audio']
+        audio_file = os.path.join(app.config['UPLOAD_FOLDER'], 'audio.wav')
+        audio.save(audio_file)
+        filename = 'audio.wav'
+    else:
+        filename = 'streaming.wav'
     
-    converted_text = convertAudio('audio.wav')
+    converted_text = convertAudio(filename)
     result = total_predict(converted_text)
     print(result)
     return result
@@ -196,9 +200,8 @@ def recorder():
     waveFile.setframerate(RATE)
     waveFile.writeframes(b''.join(frames))
     waveFile.close()
-    converted_text = convertAudio(WAVE_OUTPUT_FILENAME)
-    result = total_predict(converted_text)
-    return result
+    
+    return jsonify()
 
 @app.route('/convert/stop_record', methods=['POST'])
 def stop_record():
