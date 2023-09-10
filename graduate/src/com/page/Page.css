@@ -336,11 +336,11 @@
 }
 .progress::-webkit-progress-bar {
     background:#f0f0f0;
-    border-radius: 5px;
+    border-radius: 8px;
     box-shadow: inset 3px 3px 10px #ccc;
 }
 .progress::-webkit-progress-value {
-    border-radius: 5px;
+    border-radius: 8px;
     background: -webkit-linear-gradient(to right, #73d797, #3ea87d);
     background: linear-gradient(to right, #73d797, #3ea87d);
 }

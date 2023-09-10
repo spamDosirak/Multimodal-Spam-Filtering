@@ -1,10 +1,10 @@
 {
 	"version": "V2",
-	"requestId": "00e1ef78-d204-4bfa-9180-0e98965fe8f1",
-	"timestamp": 1693476798941,
+	"requestId": "d2f49996-9d53-4f20-b81f-6d5c1a5a478b",
+	"timestamp": 1694363076712,
 	"images": [
 		{
-			"uid": "16f7d13c26ed4b1a87df30d8e8653a27",
+			"uid": "5abb0921e28043648bcc0db4f5c441c2",
 			"name": "demo",
 			"inferResult": "SUCCESS",
 			"message": "SUCCESS",

@@ -77,6 +77,8 @@ export default function VoicePage(props) {
 
     const handleAudioFileChange = (event) => {
         setSelectedAudioFile(event.target.files[0]);
+        setProgress(0);
+        event.target.value = null;
     };
     const convertAudio = () => {
         if (progress === 0 && !selectedAudioFile) {
@@ -152,6 +154,7 @@ export default function VoicePage(props) {
 
     const handleStopRecording = () => {
         setIsRecording(false);
+        setSelectedAudioFile(null);
         fetch('/convert/stop_record', { method: 'POST' })
             .then(response => response.text())
             .then(data => console.log(data))
