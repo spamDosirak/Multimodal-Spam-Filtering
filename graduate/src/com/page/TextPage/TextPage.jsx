@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, PureComponent } from "react";
 import "../Page.css";
 
 //이 순서대로 깔아주세용
@@ -21,13 +21,14 @@ import "chart.js/auto";
 //npm install --save react-loader-spinner
 import { Oval } from "react-loader-spinner";
 import HighlightedText from "../../highlight/HightLighted";
+import { alertClasses } from "@mui/material";
 
 
 const Div_txt = styled.div`
   width: 95%;
   height: 20%;
   float: left;
-
+ 
 
   display: flex;
   padding: 2vw 2vw 2vw 2vw;
@@ -37,7 +38,7 @@ const Div_txtShow = styled.div`
   width: 40%;
   height: 70%;
   float: left;
-
+ 
   margin: 0px 4px;
   
 `;
@@ -58,12 +59,13 @@ const Btn_Result = styled.div`
   font-family: "Montserrat", sans-serif;
   font-weight: bold;
 `
-
+//float: left;
+// border: 1px solid rgb(212, 210, 224);
 const Div_NB = styled.div`
   width: 58%;
   height: 34%;
-  float: left;
-  border: 1px solid rgb(212, 210, 224);
+ 
+ 
   margin: 0px 4px;
   display: flex;
   flex-direction: column;
@@ -73,8 +75,9 @@ const Div_NB = styled.div`
 const Div_SVM = styled.div`
   width: 58%;
   height: 35%;
-  float: left;
-  border: 1px solid rgb(212, 210, 224);
+  display: flex;
+  flex-direction: column;
+ 
   margin: 0px 4px;
 `;
 
@@ -86,6 +89,8 @@ export default function TextPage(props) {
   const [SVMgraph, setSVMGraph] = useState({ category: [], value: [] });
   const [selectedResultType, setSelectedResultType] = useState("NB");
   const [conversionResult, setConversionResult] = useState('');
+  
+  const [error, setError] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [test, setTest] = useState(true);
@@ -104,6 +109,7 @@ export default function TextPage(props) {
       alert('텍스트를 입력해주세요');
       return;
     }
+    setError(false);
     setLoading(true);
     setConversionResult('');
     setNBGraph({ category: [], value: [] });
@@ -131,7 +137,7 @@ export default function TextPage(props) {
         // 에러 처리
         console.error('Error:', error);
         setLoading(false);
-          alert("에러가 발생했습니다");
+        setError(true);
       });
   };
 
@@ -144,7 +150,7 @@ export default function TextPage(props) {
     labels: NBgraph.category.slice(0, 5),
     datasets: [
       {
-        label: "NB : " + NBResult + " words",
+        label: "NB : Top 5 Words",
         data: NBgraph.value.slice(0, 5),
         backgroundColor: "#12c2e9",
         datalabels: {
@@ -160,7 +166,7 @@ export default function TextPage(props) {
     labels: SVMgraph.category.slice(0, 5),
     datasets: [
       {
-        label: "SVM : " + SVMResult + " words", 
+        label: "SVM : Top 5 Words",
         data: SVMgraph.value.slice(0, 5),
         backgroundColor: "#c471ed",
         datalabels: {
@@ -200,7 +206,7 @@ export default function TextPage(props) {
         fontSize: "1vw",
         margin: "0.5vw",
         width: "80vw",
-        height: "100%",
+        height: "95%",
       }}
     >
       <Div_txt>
@@ -243,14 +249,16 @@ export default function TextPage(props) {
         }}>
           <div style={{
             overflow: "scroll",
-            fontSize: "20px",
+            fontSize: "17px",
             scrollbarColor: "black",
             width: "80%",
-            height: "80%",
+            height: "75%",
             textAlign: "center",
             lineHeight: "1.8",
             padding: "2vw",
-          }}>
+            
+          }}
+          className="scrollBar">
             {(selectedResultType === "NB") && (conversionResult) 
               && (<HighlightedText text={conversionResult} queries={NBgraph.category} 
                                     probs={NBgraph.value} result={NBResult} />)}
@@ -296,16 +304,17 @@ export default function TextPage(props) {
 
       <Div_NB>
 
-        <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw" }}> NB ( Naive Bayes )
+        <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw"  ,
+        borderBottom: "10px solid " ,borderImage:"linear-gradient(45deg,rgba(18,194,233,0.7),rgba(196,113,237,0.7)) 10"}}> NB ( Naive Bayes )
           {NBResult && (
               <div>  :  {NBResult}</div>
           )}
         </h3>
 
 
-        <div className="section" style={{ display: "flex", justifyContent: "center" }}>
+        <div className="section" style={{height:"100%",margin:"0vw 0vw 0vw 2vw", background: "#fbfbfb",display: "flex", justifyContent: "center" }}>
           {loading ? (
-            <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{ display: "flex", justifyContent: "center" , padding:"2vw" }}>
               <Oval
                 height={80}
                 width={80}
@@ -319,7 +328,7 @@ export default function TextPage(props) {
             </div>
           ) : null}
 
-          {NBgraph.category.length !== 0 && (
+          {NBgraph.category.length != 0 && (
             <div style={{ width: "100%", height: "120%" }}>
               <div style={{ width: "35vw", height: "11vw", padding: "0vw 2vw 0vw 8vw" }}>
                 <Bar data={NBchartData} options={options} style={{}
@@ -327,20 +336,28 @@ export default function TextPage(props) {
               </div>
             </div>
           )}
+          {error && (
+            <div style = {{ padding :"3vw" , color:"red"}}>
+              {"Oops,"}
+              <br/>
+              {"Error Occured :("}
+              </div>
+          )}
         </div>
       </Div_NB>
 
 
       <Div_SVM>
-        <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw" }}> SVM ( Support Vector Machine )
+        <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw", 
+        borderBottom: "10px solid " ,borderImage:"linear-gradient(45deg,rgba(196,113,237,0.7),rgba(18,194,233,0.7)) 10"}}> SVM ( Support Vector Machine )
           {SVMResult && (
               <div>  :  {SVMResult}</div>
           )}
         </h3>
 
-        <div className="section" style={{ display: "flex", justifyContent: "center" }}>
+        <div className="section" style={{height:"100%",margin:"0vw 0vw 0vw 2vw", background: "#fbfbfb", display: "flex", justifyContent: "center" }}>
           {loading ? (
-            <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{ display: "flex", justifyContent: "center" , padding :"4vw" }}>
               <Oval
                 height={80}
                 width={80}
@@ -354,12 +371,19 @@ export default function TextPage(props) {
             </div>
           ) : null}
 
-          {SVMgraph.category.length !== 0 && (
+          {SVMgraph.category.length != 0 && (
             <div style={{ width: "100%", height: "120%" }}>
               <div style={{ width: "35vw", height: "11vw", padding: "0vw 2vw 0vw 8vw" }}>
                 <Bar data={SVMchartData} options={options} style={{}
                 } />
               </div>
+            </div>
+          )}
+          {error && (
+            <div style = {{ padding :"4vw" , color:"red"}}>
+            {"Oops,"}
+            <br/>
+            {"Error Occured :("}
             </div>
           )}
         </div>

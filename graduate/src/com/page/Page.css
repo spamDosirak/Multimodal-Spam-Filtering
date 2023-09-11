@@ -344,3 +344,18 @@
     background: -webkit-linear-gradient(to right, #73d797, #3ea87d);
     background: linear-gradient(to right, #73d797, #3ea87d);
 }
+
+.scrollBar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollBar::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  .scrollBar::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgb(58, 58, 58);
+  }
+  .scrollBar::-webkit-scrollbar-button {
+    width: 0;
+    height: 5;
+  }
