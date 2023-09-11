@@ -51,6 +51,7 @@ export default function ImagePage(props) {
     const [SVMResult, setSVMResult] = useState('');
     const [selectedResultType, setSelectedResultType] = useState("NB");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
 
     const saveImgFile = (event) => {
         setSelectedImageFile(event.target.files[0]);
@@ -70,6 +71,7 @@ export default function ImagePage(props) {
         const formData = new FormData();
         formData.append("image", selectedImageFile);
         setLoading(true);
+        setError(false);
         setNBGraph({ category: [], value: [] });
         setSVMGraph({ category: [], value: [] });
         setConversionResult('');
@@ -96,6 +98,7 @@ export default function ImagePage(props) {
                 // 에러 처리
                 console.error('Error:', error);
                 setLoading(false);
+                setError(true);
                 if (error instanceof Error && error.message === 'No String') {
                     alert('이미지에서 추출된 텍스트가 없습니다');
                 }
@@ -175,7 +178,7 @@ export default function ImagePage(props) {
                 fontSize: "1vw",
                 margin: "0.5vw",
                 width: "80vw",
-                height: "100%",
+                height: "95%",
             }}
         >
             <Div_txt>
@@ -243,49 +246,50 @@ export default function ImagePage(props) {
                             overflow: "scroll",
                             fontSize: "20px",
                             width: "90%",
-                            height: "60%",
+                            height: "47%",
                             textAlign: "center",
                             lineHeight: "1.8",
                             padding: "2vw",
                         }}
+                        className="scrollBar"
                     >
-                        {(selectedResultType === "NB") && (conversionResult) 
-                            && (<HighlightedText text={conversionResult} queries={NBgraph.category} 
-                                                    probs={NBgraph.value} result={NBResult} />)}
-                        {(selectedResultType === "SVM") && (conversionResult) 
-                            && (<HighlightedText text={conversionResult} queries={SVMgraph.category} 
-                                                    probs={SVMgraph.value} result={SVMResult} />)}
+                        {(selectedResultType === "NB") && (conversionResult)
+                            && (<HighlightedText text={conversionResult} queries={NBgraph.category}
+                                probs={NBgraph.value} result={NBResult} />)}
+                        {(selectedResultType === "SVM") && (conversionResult)
+                            && (<HighlightedText text={conversionResult} queries={SVMgraph.category}
+                                probs={SVMgraph.value} result={SVMResult} />)}
                     </div>
                     <div>
                         <button
-                        onClick={handleNBResult}
-                        style={{
-                            backgroundColor: selectedResultType === "NB" ? "#12c2e9" : "",
-                            padding : "5px 10px 5px 10px",
-                            margin: "0px 5px 10px 0px",
-                            borderRadius: "32px",
-                            border : "none",
-                            boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
-                            color: "#6f6cd",
-                            cursor: "pointer",
-                        }}
+                            onClick={handleNBResult}
+                            style={{
+                                backgroundColor: selectedResultType === "NB" ? "#FF5F6D" : "",
+                                padding: "5px 10px 5px 10px",
+                                margin: "0px 5px 10px 0px",
+                                borderRadius: "32px",
+                                border: "none",
+                                boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
+                                color: "#6f6cd",
+                                cursor: "pointer",
+                            }}
                         >
-                        NB
+                            NB
                         </button>
                         <button
-                        onClick={handleSVMResult}
-                        style={{
-                            backgroundColor: selectedResultType === "SVM" ? "#c471ed" : "",
-                            padding : "5px 10px 5px 10px",
-                            margin: "0px 0px 10px 5px",
-                            borderRadius: "32px",
-                            border : "none",
-                            boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
-                            color: "#6f6cd",
-                            cursor: "pointer",
-                        }}
+                            onClick={handleSVMResult}
+                            style={{
+                                backgroundColor: selectedResultType === "SVM" ? "#FFC371" : "",
+                                padding: "5px 10px 5px 10px",
+                                margin: "0px 0px 10px 5px",
+                                borderRadius: "32px",
+                                border: "none",
+                                boxShadow: "-6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2)",
+                                color: "#6f6cd",
+                                cursor: "pointer",
+                            }}
                         >
-                        SVM
+                            SVM
                         </button>
                     </div>
                 </div>
@@ -294,10 +298,11 @@ export default function ImagePage(props) {
             <Div_NB>
                 <h3
                     style={{
-                        lineHeight: "2",
+                        lineHeight: "3",
                         display: "flex",
                         margin: "0vw 0vw 0vw 2vw",
                         height: "2vw",
+                        borderBottom: "10px solid " ,borderImage:"linear-gradient(45deg,rgba(255,95,109,0.7),rgba(255,195,113,0.7)) 10"
                     }}
                 >
                     {" "}
@@ -309,7 +314,7 @@ export default function ImagePage(props) {
 
                 <div
                     className="section"
-                    style={{ display: "flex", justifyContent: "center" }}
+                    style={{ height:"85%",margin:"0vw 0vw 0vw 2vw", background: "#fbfbfb",display: "flex", justifyContent: "center" }}
                 >
                     {loading ? (
                         <div
@@ -332,7 +337,7 @@ export default function ImagePage(props) {
                         </div>
                     ) : null}
 
-                    {NBgraph.category.length !== 0 && (
+                    {NBgraph.category.length != 0 && (
                         <div style={{ width: "100%", height: "120%" }}>
                             <div
                                 style={{
@@ -345,16 +350,24 @@ export default function ImagePage(props) {
                             </div>
                         </div>
                     )}
+                    {error && (
+                        <div style={{ padding: "3vw", color: "red" }}>
+                            {"Oops,"}
+                            <br />
+                            {"Error Occured :("}
+                        </div>
+                    )}
                 </div>
             </Div_NB>
 
             <Div_SVM>
                 <h3
                     style={{
-                        lineHeight: "2",
+                        lineHeight: "3",
                         display: "flex",
                         margin: "0vw 0vw 0vw 2vw",
                         height: "2vw",
+                        borderBottom: "10px solid " ,borderImage:"linear-gradient(45deg,rgba(255,195,113,0.7),rgba(255,95,109,0.7)) 10"
                     }}
                 >
                     {" "}
@@ -365,7 +378,7 @@ export default function ImagePage(props) {
                 </h3>
                 <div
                     className="section"
-                    style={{ display: "flex", justifyContent: "center" }}
+                    style={{ height:"85%",margin:"0vw 0vw 0vw 2vw", background: "#fbfbfb",display: "flex", justifyContent: "center" }}
                 >
                     {loading ? (
                         <div
@@ -390,7 +403,7 @@ export default function ImagePage(props) {
                         </div>
                     ) : null}
 
-                    {SVMgraph.category.length !== 0 && (
+                    {SVMgraph.category.length != 0 && (
                         <div style={{ width: "100%", height: "120%" }}>
                             <div
                                 style={{
@@ -401,6 +414,13 @@ export default function ImagePage(props) {
                             >
                                 <Bar data={SVMchartData} options={options} style={{}} />
                             </div>
+                        </div>
+                    )}
+                    {error && (
+                        <div style={{ padding: "3vw", color: "red" }}>
+                            {"Oops,"}
+                            <br />
+                            {"Error Occured :("}
                         </div>
                     )}
                 </div>

@@ -26,8 +26,7 @@ const Div_txt = styled.div`
     width:50%;
     height:100%;
     float:left;
-    border : 1px solid rgb(212, 210, 224);
-    border:1px solid rgb(212, 210, 224);
+
     
     align-items : center;
 
@@ -45,7 +44,7 @@ const Div_txtShow = styled.div`
 const Div_NB = styled.div`
     width:45%;
     height:50%;
-    border:1px solid rgb(212, 210, 224);
+  
     float: left;
     display: flex;
     flex-direction: column;
@@ -58,9 +57,8 @@ const Div_SVM = styled.div`
     float:left;
     display: flex;
     flex-direction: column;
-    border:1px solid rgb(212, 210, 224);
+   
 `;
-
 
 export default function VoicePage(props) {
     const [conversionResult, setConversionResult] = useState('');
@@ -73,6 +71,7 @@ export default function VoicePage(props) {
     const [loading, setLoading] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
     const [progress, setProgress] = useState(0);
+    const [error, setError] = useState(false);
 
 
     const handleAudioFileChange = (event) => {
@@ -87,6 +86,7 @@ export default function VoicePage(props) {
         }
         const formData = new FormData();
         formData.append('audio', selectedAudioFile);
+        setError(false);
         setLoading(true);
         setNBGraph({ category: [], value: [] });
         setSVMGraph({ category: [], value: [] });
@@ -114,6 +114,7 @@ export default function VoicePage(props) {
             .catch(error => {
                 console.error('Error:', error);
                 setLoading(false);
+                setError(true);
                 if (error instanceof Error && error.message === 'No String') {
                     alert('음성에서 추출된 텍스트가 없습니다');
                 }
@@ -251,7 +252,7 @@ export default function VoicePage(props) {
                 fontSize: "1vw",
                 margin: "0.5vw",
                 width: "80vw",
-                height: "100%",
+                height: "95%",
                 // border:"1px solid #0400ff",
                 // boxShadow : "0 0 10px 1px #0400ff",
             }}
@@ -315,12 +316,12 @@ export default function VoicePage(props) {
                         overflow: "scroll",
                         fontSize: "20px",
                         scrollbarColor: "black",
-                        width: "80%",
-                        height: "80%",
+                        width: "83%",
+                        height: "75%",
                         textAlign: "center",
                         lineHeight: "1.8",
                         padding: "2vw",
-                    }}>
+                    }}className="scrollBar">
                         {(selectedResultType === "NB") && (conversionResult) 
                             && (<HighlightedText text={conversionResult} queries={NBgraph.category} 
                                                     probs={NBgraph.value} result={NBResult} />)}
@@ -333,7 +334,7 @@ export default function VoicePage(props) {
                         <button
                         onClick={handleNBResult}
                         style={{
-                            backgroundColor: selectedResultType === "NB" ? "#12c2e9" : "",
+                            backgroundColor: selectedResultType === "NB" ? "#1D976C" : "",
                             padding : "5px 10px 5px 10px",
                             margin: "0px 5px 10px 0px",
                             borderRadius: "32px",
@@ -348,7 +349,7 @@ export default function VoicePage(props) {
                         <button
                         onClick={handleSVMResult}
                         style={{
-                            backgroundColor: selectedResultType === "SVM" ? "#c471ed" : "",
+                            backgroundColor: selectedResultType === "SVM" ? "#93F9B9" : "",
                             padding : "5px 10px 5px 10px",
                             margin: "0px 0px 10px 5px",
                             borderRadius: "32px",
@@ -366,14 +367,15 @@ export default function VoicePage(props) {
             </Div_txt>
 
             <Div_NB>
-                <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw" }}> NB ( Naive Bayes )
+                <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw",
+                borderBottom: "10px solid " ,borderImage:"linear-gradient(45deg,rgba(29,151,108,0.7),rgba(147,249,185,0.7)) 10"  }}> NB ( Naive Bayes )
                     {NBResult && (
                         <div>  :  {NBResult}</div>
                     )}
                 </h3>
-                <div className="section" style={{ display: "flex", justifyContent: "center" }}>
+                <div className="section" style={{height:"85%",margin:"0vw 0vw 0vw 2vw", background: "#fbfbfb", display: "flex", justifyContent: "center" }}>
                     {loading ? (
-                        <div style={{ display: "flex", justifyContent: "center", position: 'relative', top: '100%' }}>
+                        <div style={{ display: "flex", justifyContent: "center", position: 'relative', top: '20%'}}>
                         <Oval
                             height={80}
                             width={80}
@@ -395,20 +397,29 @@ export default function VoicePage(props) {
                             </div>
                         </div>
                     )}
+                    {error && (
+            <div style = {{ padding :"4vw" , color:"red"}}>
+            {"Oops,"}
+            <br/>
+            {"Error Occured :("}
+            </div>
+          )}
                 </div>
             </Div_NB>
 
 
             <Div_SVM>
 
-                <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw" }}> SVM ( Support Vector Machine )
+                <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw",
+                    borderBottom: "10px solid  ",borderImage:"linear-gradient(45deg,rgba(147,249,185,0.7),rgba(29,151,108,0.7)) 10" 
+             }}> SVM ( Support Vector Machine )
                     {SVMResult && (
                         <div>  :  {SVMResult}</div>
                     )}
                 </h3>
-                <div className="section" style={{ display: "flex", justifyContent: "center" }}>
+                <div className="section" style={{height:"85%",margin:"0vw 0vw 0vw 2vw", background: "#fbfbfb", display: "flex", justifyContent: "center" }}>
                     {loading ? (
-                        <div style={{ display: "flex", justifyContent: "center", position: 'relative', top: '100%' }}>
+                        <div style={{ display: "flex", justifyContent: "center", position: 'relative', top: '20%' }}>
                         <Oval
                             height={80}
                             width={80}
@@ -430,6 +441,13 @@ export default function VoicePage(props) {
                         </div>
                         </div>
                     )}
+                    {error && (
+            <div style = {{ padding :"4vw" , color:"red"}}>
+            {"Oops,"}
+            <br/>
+            {"Error Occured :("}
+            </div>
+          )}
                     </div>
             </Div_SVM>
         </div>
