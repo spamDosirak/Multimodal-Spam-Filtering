@@ -1,10 +1,10 @@
 {
 	"version": "V2",
-	"requestId": "d1c92066-8710-44bd-9a01-e1c14a5e2eec",
-	"timestamp": 1694599602117,
+	"requestId": "f11faf52-b3a5-481d-81a0-061fc6ff9387",
+	"timestamp": 1697189474741,
 	"images": [
 		{
-			"uid": "3211cf0465804b938de1d2ce588bb637",
+			"uid": "0013c45effcc4b888053f53eaf8ae075",
 			"name": "demo",
 			"inferResult": "SUCCESS",
 			"message": "SUCCESS",
@@ -12,12 +12,121 @@
 				"result": "NO_REQUESTED"
 			},
 			"convertedImageInfo": {
-				"width": 588,
-				"height": 724,
+				"width": 748,
+				"height": 534,
 				"pageIndex": 0,
 				"longImage": false
 			},
-			"fields": []
+			"fields": [
+				{
+					"valueType": "ALL",
+					"boundingPoly": {
+						"vertices": [
+							{
+								"x": 61.0,
+								"y": 58.0
+							},
+							{
+								"x": 77.0,
+								"y": 58.0
+							},
+							{
+								"x": 77.0,
+								"y": 69.0
+							},
+							{
+								"x": 61.0,
+								"y": 69.0
+							}
+						]
+					},
+					"inferText": "M",
+					"inferConfidence": 0.9935,
+					"type": "NORMAL",
+					"lineBreak": false
+				},
+				{
+					"valueType": "ALL",
+					"boundingPoly": {
+						"vertices": [
+							{
+								"x": 168.0,
+								"y": 61.0
+							},
+							{
+								"x": 210.0,
+								"y": 61.0
+							},
+							{
+								"x": 210.0,
+								"y": 73.0
+							},
+							{
+								"x": 168.0,
+								"y": 73.0
+							}
+						]
+					},
+					"inferText": "\ucd5c\ucd08 \uacf5\uac1c",
+					"inferConfidence": 0.9857,
+					"type": "NORMAL",
+					"lineBreak": true
+				},
+				{
+					"valueType": "ALL",
+					"boundingPoly": {
+						"vertices": [
+							{
+								"x": 24.0,
+								"y": 67.0
+							},
+							{
+								"x": 120.0,
+								"y": 67.0
+							},
+							{
+								"x": 120.0,
+								"y": 94.0
+							},
+							{
+								"x": 24.0,
+								"y": 94.0
+							}
+						]
+					},
+					"inferText": "CONTINE",
+					"inferConfidence": 0.5845,
+					"type": "NORMAL",
+					"lineBreak": false
+				},
+				{
+					"valueType": "ALL",
+					"boundingPoly": {
+						"vertices": [
+							{
+								"x": 140.0,
+								"y": 79.0
+							},
+							{
+								"x": 241.0,
+								"y": 79.0
+							},
+							{
+								"x": 241.0,
+								"y": 91.0
+							},
+							{
+								"x": 140.0,
+								"y": 91.0
+							}
+						]
+					},
+					"inferText": "\uc138\ube10\ud2f4(SEVENTEEN)",
+					"inferConfidence": 0.9912,
+					"type": "NORMAL",
+					"lineBreak": true
+				}
+			]
 		}
 	]
 }

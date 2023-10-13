@@ -10,7 +10,7 @@ export default function Sidebar(props){
         {name : "INFO" , path : "/"},
         {name : "TEXT" , path : "/text"},
         {name : "IMAGE" , path : "/image"},
-        {name : "VOCIE" , path : "/voice"}
+        {name : "VOICE" , path : "/voice"}
     ]
 
     return(
