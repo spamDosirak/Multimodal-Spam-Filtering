@@ -97,10 +97,10 @@ def image_caption(img_name):
 	tokenizer.fit_on_texts(all_captions)
 
 	# load features from pickle
-	features = joblib.load('image_caption_features_new2.pkl')
+	features = joblib.load('image_caption_features_new_3.pkl')
 
 	# load the model
-	img_cap_model = load_model('best_image_caption_model_new2.h5')
+	img_cap_model = load_model('best_image_caption_model_new_3.h5')
 
 	def idx_to_word(integer, tokenizer):
 		for word, index in tokenizer.word_index.items():
