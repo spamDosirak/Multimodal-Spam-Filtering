@@ -31,7 +31,7 @@ const Div_txt = styled.div`
  
 
   display: flex;
-  padding: 2vw 2vw 2vw 2vw;
+  padding: 2vw 2vw 0vw 2vw;
 `;
 
 const Div_txtShow = styled.div`
@@ -43,27 +43,9 @@ const Div_txtShow = styled.div`
   
 `;
 
-const Btn_Result = styled.div`
-  width: px;
-  height: 50px;
-  background: #f7f5f5;
-  position: relative;
-  border-radius: 32px;
-  border: none;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.1s ease-in-out;
-  box-shadow: -6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2);
-  color: #6f6cde;
-  font-size: large;
-  font-family: "Montserrat", sans-serif;
-  font-weight: bold;
-`
-//float: left;
-// border: 1px solid rgb(212, 210, 224);
 const Div_NB = styled.div`
   width: 58%;
-  height: 34%;
+  height: 37%;
  
  
   margin: 0px 4px;
@@ -74,7 +56,7 @@ const Div_NB = styled.div`
 
 const Div_SVM = styled.div`
   width: 58%;
-  height: 35%;
+  height: 37%;
   display: flex;
   flex-direction: column;
  
@@ -150,7 +132,7 @@ export default function TextPage(props) {
     labels: NBgraph.category.slice(0, 5),
     datasets: [
       {
-        label: "NB : Top 5 Words",
+        label: "NB : " + NBResult + " words",
         data: NBgraph.value.slice(0, 5),
         backgroundColor: "#12c2e9",
         datalabels: {
@@ -166,7 +148,7 @@ export default function TextPage(props) {
     labels: SVMgraph.category.slice(0, 5),
     datasets: [
       {
-        label: "SVM : Top 5 Words",
+        label: "SVM : " + SVMResult + " words",
         data: SVMgraph.value.slice(0, 5),
         backgroundColor: "#c471ed",
         datalabels: {
@@ -249,7 +231,7 @@ export default function TextPage(props) {
         }}>
           <div style={{
             overflow: "scroll",
-            fontSize: "17px",
+            fontSize: "15px",
             scrollbarColor: "black",
             width: "80%",
             height: "75%",
@@ -305,9 +287,9 @@ export default function TextPage(props) {
       <Div_NB>
 
         <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw"  ,
-        borderBottom: "10px solid " ,borderImage:"linear-gradient(45deg,rgba(18,194,233,0.7),rgba(196,113,237,0.7)) 10"}}> NB ( Naive Bayes )
+        borderBottom: "10px solid " ,borderImage:"linear-gradient(45deg,rgba(18,194,233,0.7),rgba(196,113,237,0.7)) 10"}}> NB ( Naive Bayes ) : 
           {NBResult && (
-              <div>  :  {NBResult}</div>
+              <div style={{fontSize:"27px", lineHeight:"2", margin: "0px 10px 0 10px"}}>  { NBResult } </div>
           )}
         </h3>
 
@@ -349,15 +331,15 @@ export default function TextPage(props) {
 
       <Div_SVM>
         <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw", 
-        borderBottom: "10px solid " ,borderImage:"linear-gradient(45deg,rgba(196,113,237,0.7),rgba(18,194,233,0.7)) 10"}}> SVM ( Support Vector Machine )
+        borderBottom: "10px solid " ,borderImage:"linear-gradient(45deg,rgba(196,113,237,0.7),rgba(18,194,233,0.7)) 10"}}> SVM ( Support Vector Machine ) :
           {SVMResult && (
-              <div>  :  {SVMResult}</div>
+              <div style={{fontSize:"27px", lineHeight:"2", margin: "0px 10px 0 10px"}}>  { SVMResult } </div>
           )}
         </h3>
 
         <div className="section" style={{height:"100%",margin:"0vw 0vw 0vw 2vw", background: "#fbfbfb", display: "flex", justifyContent: "center" }}>
           {loading ? (
-            <div style={{ display: "flex", justifyContent: "center" , padding :"4vw" }}>
+            <div style={{ display: "flex", justifyContent: "center" , padding :"3vw" }}>
               <Oval
                 height={80}
                 width={80}

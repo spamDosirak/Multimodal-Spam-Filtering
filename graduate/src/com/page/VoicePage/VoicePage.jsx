@@ -192,7 +192,7 @@ export default function VoicePage(props) {
             {
                 label: "NB : " + NBResult + " words",
                 data: NBgraph.value.slice(0, 5),
-                backgroundColor: "#12c2e9",
+                backgroundColor: "#1D976C",
                 datalabels: {
                 color: "black",
                 backgroundColor: 'white',
@@ -208,7 +208,7 @@ export default function VoicePage(props) {
             {
             label: "SVM : " + SVMResult + " words",
             data: SVMgraph.value.slice(0, 5),
-            backgroundColor: "#c471ed",
+            backgroundColor: "#93F9B9",
             datalabels: {
                 color: "black",
                 backgroundColor: 'white',
@@ -314,7 +314,7 @@ export default function VoicePage(props) {
                     <div style={{
                         //padding : "20px",
                         overflow: "scroll",
-                        fontSize: "20px",
+                        fontSize: "17px",
                         scrollbarColor: "black",
                         width: "83%",
                         height: "75%",
@@ -327,7 +327,7 @@ export default function VoicePage(props) {
                                                     probs={NBgraph.value} result={NBResult} />)}
                         {(selectedResultType === "SVM") && (conversionResult) 
                             && (<HighlightedText text={conversionResult} queries={SVMgraph.category}
-                                                    probs={SVMgraph.value} result={NBResult} />)}
+                                                    probs={SVMgraph.value} result={SVMResult} />)}
                     </div>
                     
                     <div>
@@ -368,9 +368,9 @@ export default function VoicePage(props) {
 
             <Div_NB>
                 <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw",
-                borderBottom: "10px solid " ,borderImage:"linear-gradient(45deg,rgba(29,151,108,0.7),rgba(147,249,185,0.7)) 10"  }}> NB ( Naive Bayes )
+                borderBottom: "10px solid " ,borderImage:"linear-gradient(45deg,rgba(29,151,108,0.7),rgba(147,249,185,0.7)) 10"  }}> NB ( Naive Bayes ) :
                     {NBResult && (
-                        <div>  :  {NBResult}</div>
+                        <div style={{fontSize:"27px", lineHeight:"2", margin: "0px 10px 0 10px"}}>  { NBResult } </div>
                     )}
                 </h3>
                 <div className="section" style={{height:"85%",margin:"0vw 0vw 0vw 2vw", background: "#fbfbfb", display: "flex", justifyContent: "center" }}>
@@ -412,9 +412,9 @@ export default function VoicePage(props) {
 
                 <h3 style={{ lineHeight: "3", display: "flex", margin: "0vw 0vw 0vw 2vw", height: "2vw",
                     borderBottom: "10px solid  ",borderImage:"linear-gradient(45deg,rgba(147,249,185,0.7),rgba(29,151,108,0.7)) 10" 
-             }}> SVM ( Support Vector Machine )
+             }}> SVM ( Support Vector Machine ) :
                     {SVMResult && (
-                        <div>  :  {SVMResult}</div>
+                        <div style={{fontSize:"27px", lineHeight:"2", margin: "0px 10px 0 10px"}}>  { SVMResult } </div>
                     )}
                 </h3>
                 <div className="section" style={{height:"85%",margin:"0vw 0vw 0vw 2vw", background: "#fbfbfb", display: "flex", justifyContent: "center" }}>

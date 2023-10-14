@@ -161,65 +161,12 @@ export default function InfoPage(props) {
 
 
 
-        <IntroBlock style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }} >
-
-          <div style={{ width: "30%", height: "35%", margin: "none" }}>
-            <Fade bottom duration={1500} delay={1700} >
-              <div style={{ background: "white", borderRadius: "24px", width: "20vw", height: "70vh", margin: "8vh 1vw 1vh 5vw", lineHeight: "3" }}>
-                SVM은 서로 다른 클래스를 지닌 데이터 사이의 간격이 최대가 되는 선이나 평면을 찾아 이를 기준으로 각 데이터들을 분류하는 모델이다.
-                다시 말해 데이터 사이에 존재하는 여백(margin)을 최대화하여 일반화하는 성능을 극대화한 모델이다.
-              </div>
-            </Fade>
-          </div>
-          <div style={{ width: "40%", height: "35%", margin: "none" }}>
-            <Fade bottom duration={1500} delay={300} >
-              <p style={{ fontSize: "6vw", margin: "0.5em" }}>
-                <strong className="gradiSVM">SVM</strong>
-              </p>
-            </Fade>
-
-            <Fade bottom duration={1500} delay={550}>
-              <p style={{ fontSize: "5vw" }}>
-                and
-              </p>
-            </Fade>
-            <Fade bottom duration={1500} delay={700}>
-              <p style={{ fontSize: "6vw" }}>
-                <strong className="gradiNB">NB</strong>
-              </p>
-            </Fade>
-          </div>
-          <div style={{ width: "30%", height: "35%", margin: "0" }}>
-            <Fade bottom duration={1500} delay={1700} >
-              <div style={{ background: "white", borderRadius: "24px", width: "20vw", height: "70vh", margin: "8vh 5vw 1vh 1vw", lineHeight: "3" }}>
-                나이브 베이즈(Naive Bayes)분류기는 선형 모델과 매우 유사하다. 선형 모델(y=wx+b)과 형태가 같으나, 나이브 베이즈 모델의 계수 w는 기울기가 아니라서 선형 모델과는 의미가 다르다.
-
-                {"https://databasecamp.de/en/ml/svm-explained"}
-              </div>
-            </Fade>
-
-          </div>
-
-
-
-
-          <br /><br /><br /><br /><br /><br />
-          <Fade bottom duration={1500} delay={1100} >
-            <p style={{ fontSize: "1.7vw", lineHeight: "1.3", color: "grey", padding: "6vw 0vw 0vw 0vw" }} >
-              우리는 스팸을 판별하기 위해  <br />
-              Naive Bayes 와 Support Vector Machine<br />
-              두 가지 기법을 사용합니다.
-            </p>
-          </Fade>
-
-
-        </IntroBlock>
 
 
         <IntroBlock style={{ lineHeight: "1", justifyContent: "center", alignItems: "center", justifyItems: "center" }}>
 
 
-          <Fade bottom duration={1500} delay={1000} >
+          <Fade bottom duration={1500} delay={600} >
             <p style={{ fontSize: "7vw" }}>
               <strong className="gradiGraph">Graphs</strong>
             </p>
@@ -244,6 +191,65 @@ export default function InfoPage(props) {
 
         </IntroBlock>
 
+
+
+
+
+        <IntroBlock style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }} >
+
+          {/* <div style={{ width: "30%", height: "35%", margin: "none" }}>
+            <Fade bottom duration={1500} delay={1700} >
+              <div style={{ background: "white", borderRadius: "24px", width: "20vw", height: "50vh", margin: "8vh 1vw 1vh 5vw", lineHeight: "3" }}>
+                SVM  <br/>
+                Support Vector Machine<br/>
+                다목적 머신러닝 모델로, 한 클래스의 데이터 점을 다른 클래스의 데이터 점과 가능한 가장
+                잘 구분해내는 초평면을 찾는것을 목표로 한다.
+              </div>
+            </Fade>
+          </div> */}
+          <div style={{ width: "100%", height: "35%", margin: "none" ,justifyContent :"flex"}}>
+            <Fade bottom duration={1500} delay={300} >
+              <p style={{ fontSize: "6vw", margin: "2em 0em 0em 0em" }}>
+                <strong className="gradiSVM">Support Vector Machine</strong>
+              </p>
+            </Fade>
+
+            <Fade bottom duration={1500} delay={550}>
+              <p style={{ fontSize: "5vw" }}>
+                and
+              </p>
+            </Fade>
+            <Fade bottom duration={1500} delay={700}>
+              <p style={{ fontSize: "6vw" }}>
+                <strong className="gradiNB">Naive Bayes</strong>
+              </p>
+            </Fade>
+          </div>
+          {/* <div style={{ width: "30%", height: "35%", margin: "0" }}>
+            <Fade bottom duration={1500} delay={1700} >
+              <div style={{ background: "white", borderRadius: "24px", width: "20vw", height: "70vh", margin: "8vh 5vw 1vh 1vw", lineHeight: "3" }}>
+              NB <br/>
+              Navie Bayes <br/>
+
+              두 확률 변수의 사전 확률과 사후 확률 사이의 관계를 나타내는 정리로, 사전 확률로부터 사후 확률을 구할 수 있다. <br/>
+              즉 새로운 데이터에 대해서 해당 데이터를 표현하는 특징벡터가 주어졌을때, 가장 가능성이 높은 것을 찾는 것이다.
+
+
+              </div>
+            </Fade>
+
+          </div> */}
+
+          <Fade bottom duration={1500} delay={1100} >
+            <p style={{ fontSize: "1.7vw", lineHeight: "1.3", color: "grey", padding: "12em 0vw 0vw 0vw" }} >
+              우리는 스팸을 판별하기 위해  <br />
+              Naive Bayes 와 Support Vector Machine<br />
+              두 가지 기법을 사용합니다.
+            </p>
+          </Fade>
+
+
+        </IntroBlock>
 
 
 

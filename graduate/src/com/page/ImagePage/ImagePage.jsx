@@ -244,12 +244,12 @@ export default function ImagePage(props) {
                         style={{
                             //padding : "20px",
                             overflow: "scroll",
-                            fontSize: "20px",
+                            fontSize: "15px",
                             width: "90%",
-                            height: "47%",
+                            height: "60%",
                             textAlign: "center",
                             lineHeight: "1.8",
-                            padding: "2vw",
+                            padding: "1.5vw",
                         }}
                         className="scrollBar"
                     >
@@ -306,9 +306,9 @@ export default function ImagePage(props) {
                     }}
                 >
                     {" "}
-                    NB ( Naive Bayes )
+                    NB ( Naive Bayes ) :
                     {NBResult && (
-                        <div>  :  {NBResult}</div>
+                        <div style={{fontSize:"27px", lineHeight:"2", margin: "0px 10px 0 10px"}}>  { NBResult } </div>
                     )}
                 </h3>
 
@@ -341,7 +341,7 @@ export default function ImagePage(props) {
                         <div style={{ width: "100%", height: "120%" }}>
                             <div
                                 style={{
-                                    width: "27vw",
+                                    width: "25vw",
                                     height: "17vw",
                                     padding: "3vw 0vw 0vw 0vw",
                                 }}
@@ -371,9 +371,9 @@ export default function ImagePage(props) {
                     }}
                 >
                     {" "}
-                    SVM ( Support Vector Machine )
+                    SVM ( Support Vector Machine ) :
                     {SVMResult && (
-                        <div>  :  {SVMResult}</div>
+                        <div style={{fontSize:"27px", lineHeight:"2", margin: "0px 10px 0 10px"}}>  { SVMResult } </div>
                     )}
                 </h3>
                 <div
@@ -407,7 +407,7 @@ export default function ImagePage(props) {
                         <div style={{ width: "100%", height: "120%" }}>
                             <div
                                 style={{
-                                    width: "27vw",
+                                    width: "25vw",
                                     height: "17vw",
                                     padding: "3vw 0vw 0vw 0vw",
                                 }}
