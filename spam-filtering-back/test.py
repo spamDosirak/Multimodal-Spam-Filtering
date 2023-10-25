@@ -197,7 +197,6 @@ def convertImage():
 	image.save(filepath)
 	image_file = filepath
 
-	print(image_file)
 	img_caption = image_caption(image_file)
 
 	# 이미지 처리 로직 작성
@@ -232,7 +231,6 @@ def convertImage():
 	text = ""
 	for field in result['images'][0]['fields']:
 		text += field['inferText'] + ' '
-	#print(text)
 	res = total_predict(img_caption+text)
 	
 	return res
@@ -382,20 +380,16 @@ def total_predict(text):
 		if i[0] not in l1['category'] :
 			l1['category'].append(str(i[0]))
 			l1['value'].append((round(i[1]*100,2)))
-	print("executed")
 	#SVM predict
 	svm_vect = SVM()[0]
 	svm_model = SVM()[1]
-	print("executed2")
 	cv2 = svm_vect
 	vect2 = cv2.transform([value2]).toarray()
 	accuracy2 = svm_model.predict_proba(vect2)[0,1]
-	print("executed3")
 	# 단어들
 	pipeline2 = make_pipeline(cv2, svm_model)  # 텍스트 데이터 벡터화 및 분류 모델링
 	class_names = ['0', '1']
 	explainer2 = LimeTextExplainer(class_names=class_names)
-	print("executed4")
 	exp2 = explainer2.explain_instance(value2, pipeline2.predict_proba, num_features=6)
 	print(exp2.as_list())
 	
