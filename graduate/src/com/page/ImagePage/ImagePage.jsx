@@ -71,6 +71,8 @@ export default function ImagePage(props) {
         const formData = new FormData();
         formData.append("image", selectedImageFile);
         setLoading(true);
+        setNBResult("");
+        setSVMResult("");
         setError(false);
         setNBGraph({ category: [], value: [] });
         setSVMGraph({ category: [], value: [] });
@@ -306,9 +308,9 @@ export default function ImagePage(props) {
                     }}
                 >
                     {" "}
-                    NB ( Naive Bayes ) :
+                    NB (Naive Bayes) :
                     {NBResult && (
-                        <div style={{fontSize:"27px", lineHeight:"2", margin: "0px 10px 0 10px"}}>  { NBResult } </div>
+                        <div style={{fontSize:"25px", lineHeight:"2", margin: "0px 10px 0 10px"}}>  { NBResult } </div>
                     )}
                 </h3>
 
@@ -371,9 +373,9 @@ export default function ImagePage(props) {
                     }}
                 >
                     {" "}
-                    SVM ( Support Vector Machine ) :
+                    SVM (Support Vector Machine) :
                     {SVMResult && (
-                        <div style={{fontSize:"27px", lineHeight:"2", margin: "0px 10px 0 10px"}}>  { SVMResult } </div>
+                        <div style={{fontSize:"25px", lineHeight:"2", margin: "0px 10px 0 10px"}}>  { SVMResult } </div>
                     )}
                 </h3>
                 <div

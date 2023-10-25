@@ -38,7 +38,7 @@ export default function HighlightedText({ text, queries, probs, result }) {
                                 borderRadius: '5px',
                                 position: 'absolute',
                                 left: '0%',
-                                top: '-20px',
+                                top: '-25px',
                                 whiteSpace: 'nowrap', // 한 줄에 표시되도록 설정
                                 zIndex: 9999 // 다른 요소보다 위로 뜨도록 설정
                             }}
