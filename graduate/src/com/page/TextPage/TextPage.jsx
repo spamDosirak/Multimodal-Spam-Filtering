@@ -94,6 +94,8 @@ export default function TextPage(props) {
     setError(false);
     setLoading(true);
     setConversionResult('');
+    setNBResult("");
+    setSVMResult("");
     setNBGraph({ category: [], value: [] });
     setSVMGraph({ category: [], value: [] });
     

@@ -88,6 +88,8 @@ export default function VoicePage(props) {
         formData.append('audio', selectedAudioFile);
         setError(false);
         setLoading(true);
+        setNBResult('');
+        setSVMResult('');
         setNBGraph({ category: [], value: [] });
         setSVMGraph({ category: [], value: [] });
         setConversionResult('');
@@ -129,6 +131,8 @@ export default function VoicePage(props) {
         setSVMGraph({ category: [], value: [] });
         setConversionResult('');
         setSelectedAudioFile(null);
+        setNBResult("");
+        setSVMResult("");
         setProgress(0);
         setIsRecording(true);
         fetch('/convert/start_record', { method: 'POST' })
@@ -273,7 +277,7 @@ export default function VoicePage(props) {
                         <progress 
                             className = "progress"
                             value={progress} 
-                            max="30000" >
+                            max="60000" >
                         </progress>
                         </div>
                     </span>
